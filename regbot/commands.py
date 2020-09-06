@@ -42,5 +42,5 @@ async def register(ctx, barcode: str):
         "We hope that you enjoy your stay!"
     )
     await log(
-        f"{member.mention} was successfully registered with ticket " f"{ticket.barcode}"
+        f"{member.mention} was successfully registered with ticket {ticket.barcode}"
     )
