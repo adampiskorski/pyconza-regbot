@@ -27,7 +27,7 @@ Set the following environmental variables
 ## Run
 
 Using [poetry](https://python-poetry.org/)
-> `poetry install`
+> `poetry install --no-dev`
 
 Then activate the virtualenv with
 > `poetry shell`
@@ -38,7 +38,7 @@ Then start the server with
 ## Development
 
 Install dev dependencies with
-> `poetry install --dev`
+> `poetry install`
 
 Configure [pre-commit](https://pre-commit.com/) with
 > `pre-commit install`
