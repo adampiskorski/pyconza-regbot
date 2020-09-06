@@ -28,7 +28,7 @@ async def on_member_join(member):
     )
     await member.dm_channel.send(
         f"If you need any assistance, then please do not hesitate to ask for it at the"
-        f" {server_info.help_desk.mention}, or from an {server_info.organizer.mention}."
+        f" {server_info.help_desk.mention}, or from an organizer."
     )
 
 
