@@ -16,7 +16,8 @@ Set the following environmental variables
 * DISCORD_HELPDESK_CHANNEL_ID: The helpdesk channel
 * DISCORD_GUILD_ID: The conference's discord server ID (yes, one conference server at a time)
 * DISCORD_REGISTERED_ROLE_NAME: The name of the attendee role
-* DISCORD_REGISTRATION_ROLE: The name of the organizer role
+* DISCORD_REGISTRATION_ROLE: The name of the registration role
+* DISCORD_ORGANIZER_ROLE: The name of the organizer role
 
 * QUICKET_USER_TOKEN: The [user token](https://www.quicket.co.za/account/users/apikeys.aspx) (from personal profile) for Quicket. It needs to be of the user which created the Quicket event in order to have sufficient permissions to access the guest list endpoint.
 * QUICKET_API_KEY: The API key from Quicket's [developer portal](https://developer.quicket.co.za/)

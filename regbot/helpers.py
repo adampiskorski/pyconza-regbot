@@ -38,6 +38,7 @@ async def log(message: str):
 
 ATTENDEE_ROLE = get_str_env("DISCORD_REGISTERED_ROLE_NAME")
 REGISTRATION_ROLE = get_str_env("DISCORD_REGISTRATION_ROLE")
+ORGANIZER_ROLE = get_str_env("DISCORD_ORGANIZER_ROLE")
 HELP_DESK = get_int_env("DISCORD_HELPDESK_CHANNEL_ID")
 GUILD_ID = get_int_env("DISCORD_GUILD_ID")
 
@@ -48,6 +49,7 @@ class ServerInfo:
 
     attendee: Role
     registration: Role
+    organizer: Role
     help_desk: TextChannel
     guild: Guild
 
@@ -66,6 +68,9 @@ class ServerInfo:
             registration = get(guild.roles, name=REGISTRATION_ROLE)
             assert registration is not None, "The registration role was not found!"
 
+            organizer = get(guild.roles, name=ORGANIZER_ROLE)
+            assert organizer is not None, "The organizer role was not found!"
+
             help_desk = bot.get_channel(HELP_DESK)
             assert help_desk is not None, "The help desk channel was not found!"
 
@@ -73,6 +78,7 @@ class ServerInfo:
                 guild=guild,
                 attendee=attendee,
                 registration=registration,
+                organizer=organizer,
                 help_desk=help_desk,
             )
 
