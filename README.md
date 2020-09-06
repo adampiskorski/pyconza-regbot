@@ -27,8 +27,10 @@ Set the following environmental variables
 
 Using [poetry](https://python-poetry.org/)
 > `poetry install`
+
 Then activate the virtualenv with
 > `poetry shell`
+
 Then start the server with
 > `python -m regbot`
 
