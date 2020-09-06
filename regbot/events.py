@@ -16,7 +16,7 @@ async def on_ready():
 @bot.event
 async def on_member_join(member):
     server_info = await ServerInfo.get()
-    channel = member.dm_channel()
+    channel = member.dm_channel
     if channel is None:
         channel = await member.create_dm()
     await member.dm_channel.send(f"Welcome {member.name} to {EVENT_NAME}!")
