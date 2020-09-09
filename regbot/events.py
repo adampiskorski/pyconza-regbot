@@ -16,9 +16,12 @@ async def on_ready():
 @bot.event
 async def on_member_join(member):
     server_info = await ServerInfo.get()
+    await log(f"{member.mention} has joined the server!")
     channel = member.dm_channel
     if channel is None:
         channel = await member.create_dm()
+    else:
+        await log(f"Could not create DM channel for {member.mention}!")
     await member.dm_channel.send(f"Welcome {member.name} to {EVENT_NAME}!")
     await member.dm_channel.send(
         f"I am the registration bot for {EVENT_NAME}. Simply "
@@ -30,6 +33,7 @@ async def on_member_join(member):
         f"If you need any assistance, then please do not hesitate to ask for it at the"
         f" {server_info.help_desk.mention}, or from an organizer."
     )
+    await log(f"{member.mention} has been greeted via DM.")
 
 
 @bot.event
