@@ -1,5 +1,6 @@
 import logging
 import os
+from regbot.tasks import QuicketSync
 import sys
 
 from regbot import bot
@@ -19,4 +20,5 @@ logging.basicConfig(
 )
 logger = logging.getLogger()
 
+bot.add_cog(QuicketSync(bot))
 bot.run(TOKEN)

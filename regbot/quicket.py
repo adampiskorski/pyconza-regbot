@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Dict, Optional
 from urllib.parse import urljoin
 from dataclasses import dataclass
@@ -69,14 +69,4 @@ async def get_ticket_by_barcode(barcode: str) -> Optional[Ticket]:
     """Query the Quicket guest list for the event or pull for cache if it's still
     fresh.
     """
-    global LAST_QUICKET_FETCH
-    fetch_interval_is_expired = (
-        LAST_QUICKET_FETCH + timedelta(minutes=CACHE_EXPIRE_MINUTES) < datetime.now()
-    )
-
-    if fetch_interval_is_expired:
-        await log("Quicket ticket cache expired, downloading...")
-        await update_ticket_cache()
-        LAST_QUICKET_FETCH = datetime.now()
-
     return TICKETS.get(barcode)
