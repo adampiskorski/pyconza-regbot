@@ -1,7 +1,6 @@
-from datetime import datetime
+from dataclasses import dataclass
 from typing import Dict, Optional
 from urllib.parse import urljoin
-from dataclasses import dataclass
 
 import httpx
 
@@ -14,8 +13,6 @@ EVENT_ID = get_int_env("QUICKET_EVENT_ID")
 
 
 QUICKET_BASE_URL = "https://api.quicket.co.za"
-
-LAST_QUICKET_FETCH = datetime(year=1970, month=1, day=1)
 
 
 @dataclass
@@ -37,9 +34,9 @@ TICKETS: Dict[str, Ticket] = dict()
 
 async def update_ticket_cache() -> None:
     """Update the global TICKETS cache dictionary from Quicket"""
-    async with httpx.AsyncClient() as bot:
+    async with httpx.AsyncClient() as client:
         url = urljoin(QUICKET_BASE_URL, f"api/events/{EVENT_ID}/guests")
-        r = await bot.get(
+        r = await client.get(
             url,
             params={"api_key": API_KEY},
             headers={"usertoken": USER_TOKEN},

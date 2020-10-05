@@ -19,6 +19,7 @@ Set the following environmental variables
 * DISCORD_REGISTERED_ROLE_NAME: The name of the attendee role
 * DISCORD_REGISTRATION_ROLE: The name of the registration role
 * DISCORD_ORGANIZER_ROLE: The name of the organizer role
+* DISCORD_SPEAKER_ROLE: The name of the speaker role
 
 * QUICKET_USER_TOKEN: The [user token](https://www.quicket.co.za/account/users/apikeys.aspx) (from personal profile) for Quicket. It needs to be of the user which created the Quicket event in order to have sufficient permissions to access the guest list endpoint.
 * QUICKET_API_KEY: The API key from Quicket's [developer portal](https://developer.quicket.co.za/)
@@ -35,7 +36,16 @@ Google sheets is used for state management. The following environmental variable
 * GOOGLE_CLIENT_X509_CERT_URL: `client_x509_cert_url`
 
 * GOOGLE_SHEET_ID: The ID of the spread sheet to use for state management.
-* GOOGLE_SHEET_WORKSHEET_NAME: The human readable name of the specific sheet to use
+* GOOGLE_SHEET_WORKSHEET_NAME: The human readable name of the specific sheet to use.
+
+For use with the PyConZA site and wafer:
+
+* WAFER_USERNAME: The username to sign on with.
+* WAFER_PASSWORD: The password to sing on with.
+* WAFER_BASE_URL: The base URL of the Wafer site.
+* WAFER_TICKETS_ENDPOINT: The endpoint URL of the tickets API.
+* WAFER_TALKS_ENDPOINT: The endpoint URL of the talks API.
+* WAFER_CACHE_EXPIRE_MINUTES: How often to call the Wafer tickets and talks endpoints for an updated speakers list.
 
 ## Run
 

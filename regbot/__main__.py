@@ -6,7 +6,7 @@ import regbot.commands  # noqa: F401
 import regbot.events  # noqa: F401
 from regbot import bot
 from regbot.helpers import get_str_env
-from regbot.tasks import QuicketSync
+from regbot.tasks import QuicketSync, WaferSync
 
 TOKEN = get_str_env("DISCORD_TOKEN")
 LOGGING_LEVEL = os.getenv("LOGGING_LEVEL", "INFO")
@@ -21,4 +21,5 @@ logging.basicConfig(
 logger = logging.getLogger()
 
 bot.add_cog(QuicketSync(bot))
+bot.add_cog(WaferSync(bot))
 bot.run(TOKEN)

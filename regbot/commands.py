@@ -1,9 +1,10 @@
-from regbot.sheets import is_ticket_used, register_ticket
 from discord.errors import Forbidden
 
 from regbot import bot
 from regbot.helpers import ServerInfo, get_str_env, log
 from regbot.quicket import get_ticket_by_barcode
+from regbot.sheets import is_ticket_used, register_ticket
+from regbot.wafer import is_barcode_belong_to_speaker
 
 EVENT_NAME = get_str_env("EVENT_NAME")
 
@@ -60,4 +61,7 @@ async def register(ctx, barcode: str):
     await log(
         f"{member.mention} was successfully registered with ticket {ticket.barcode}"
     )
+    if await is_barcode_belong_to_speaker(barcode):
+        await member.add_roles(server_info.speaker)
+        await log(f"{member.mention} has been given the speaker role!")
     await register_ticket(ticket, member)
