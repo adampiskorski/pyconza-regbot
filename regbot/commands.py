@@ -19,7 +19,7 @@ async def register(ctx, barcode: str):
         return await log("None object member encountered in registration call.")
     assistance = (
         "If you need assistance, then please ask for assistance from the "
-        f"{server_info.help_desk.mention} or a/an {server_info.registration.mention}"
+        f"{server_info.help_desk.mention} or a/an {server_info.registration.name}"
     )
 
     if ticket is None:
