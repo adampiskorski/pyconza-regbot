@@ -54,6 +54,7 @@ async def register(ctx, barcode: str):
             "'Change Nickname'."
         )
         await log(f"{ticket.full_name} was truncated to {truncated_name}")
+
     await ctx.send(
         f"Registration successfull! Thank you for registering for {EVENT_NAME}! "
         f"We hope that you enjoy your stay {ticket.full_name}!"
@@ -61,7 +62,12 @@ async def register(ctx, barcode: str):
     await log(
         f"{member.mention} was successfully registered with ticket {ticket.barcode}"
     )
+
     if await is_barcode_belong_to_speaker(barcode):
         await member.add_roles(server_info.speaker)
         await log(f"{member.mention} has been given the speaker role!")
+        await ctx.send(
+            "I have also detected that you are a speaker and have assigned you that role."
+        )
+
     await register_ticket(ticket, member)
