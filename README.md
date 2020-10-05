@@ -13,7 +13,8 @@ Set the following environmental variables
 
 * DISCORD_TOKEN: Your discord bot token from the [Discord developer portal](https://discord.com/developers/applications) (this bot should already be added to the discord server).
 * DISCORD_LOG_CHANNEL_ID: The discord channel where bot log messages (errors and successes) will be sent to.
-* DISCORD_HELPDESK_CHANNEL_ID: The helpdesk channel
+* DISCORD_HELPDESK_CHANNEL_ID: The help desk channel
+* DISCORD_WELCOME_CHANNEL_ID: The channel used for greetings
 * DISCORD_GUILD_ID: The conference's discord server ID (yes, one conference server at a time)
 * DISCORD_REGISTERED_ROLE_NAME: The name of the attendee role
 * DISCORD_REGISTRATION_ROLE: The name of the registration role

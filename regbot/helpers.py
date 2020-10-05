@@ -40,6 +40,7 @@ ATTENDEE_ROLE = get_str_env("DISCORD_REGISTERED_ROLE_NAME")
 REGISTRATION_ROLE = get_str_env("DISCORD_REGISTRATION_ROLE")
 ORGANIZER_ROLE = get_str_env("DISCORD_ORGANIZER_ROLE")
 HELP_DESK = get_int_env("DISCORD_HELPDESK_CHANNEL_ID")
+WELCOME_CHANNEL = get_int_env("DISCORD_WELCOME_CHANNEL_ID")
 GUILD_ID = get_int_env("DISCORD_GUILD_ID")
 
 
@@ -51,6 +52,7 @@ class ServerInfo:
     registration: Role
     organizer: Role
     help_desk: TextChannel
+    welcome_channel: TextChannel
     guild: Guild
 
     @classmethod
@@ -74,12 +76,16 @@ class ServerInfo:
             help_desk = bot.get_channel(HELP_DESK)
             assert help_desk is not None, "The help desk channel was not found!"
 
+            welcome_channel = bot.get_channel(WELCOME_CHANNEL)
+            assert welcome_channel is not None, "The general channel was not found!"
+
             SERVER_INFO_CACHE = cls(
                 guild=guild,
                 attendee=attendee,
                 registration=registration,
                 organizer=organizer,
                 help_desk=help_desk,
+                welcome_channel=welcome_channel,
             )
 
         return SERVER_INFO_CACHE
