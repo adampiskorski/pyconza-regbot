@@ -17,8 +17,9 @@ class QuicketSync(commands.Cog):
 
     @tasks.loop(minutes=QUICKET_CACHE_EXPIRE_MINUTES)
     async def sync(self):
-        await log("Quicket ticket cache expired, downloading...")
+        await log("Refreshing Quicket cache...")
         await update_ticket_cache()
+        await log("Quicket cache refreshed.")
 
     @sync.before_loop
     async def before_sync(self):
@@ -34,8 +35,9 @@ class WaferSync(commands.Cog):
 
     @tasks.loop(minutes=WAFER_CACHE_EXPIRE_MINUTES)
     async def sync_speakers(self):
-        await log("Wafer speakers cache expired, downloading...")
+        await log("Refreshing Wafer speakers cache...")
         await update_speakers_cache()
+        await log("Wafer speakers cache refreshed.")
 
     @sync_speakers.before_loop
     async def before_sync_speakers(self):
