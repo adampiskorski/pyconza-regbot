@@ -1,6 +1,8 @@
+from regbot.sheets import is_ticket_used, register_ticket
 from discord.errors import Forbidden
+
 from regbot import bot
-from regbot.helpers import get_str_env, log, ServerInfo
+from regbot.helpers import ServerInfo, get_str_env, log
 from regbot.quicket import get_ticket_by_barcode
 
 EVENT_NAME = get_str_env("EVENT_NAME")
@@ -12,15 +14,29 @@ async def register(ctx, barcode: str):
     ticket = await get_ticket_by_barcode(barcode)
     server_info = await ServerInfo.get()
     member = server_info.guild.get_member(ctx.author.id)
+    if member is None:
+        return await log("None object member encountered in registration call.")
+    assistance = (
+        "If you need assistance, then please ask for assistance from the "
+        f"{server_info.help_desk.mention} or a/an {server_info.registration.mention}"
+    )
+
     if ticket is None:
         await ctx.send(
-            f"Sorry, I could not find a ticket with the barcode {barcode}. If you need "
-            f"assistance, then please ask for assistance from the "
-            f"{server_info.help_desk.mention} or a/an {server_info.registration.mention}"
+            f"Sorry, I could not find a ticket with the barcode {barcode}. {assistance}"
         )
         return await log(
             f"{member.name} tried and failed to register a ticket with the "
-            f"barcode {barcode}!"
+            f"barcode {barcode} as it wasn't found!"
+        )
+
+    if await is_ticket_used(ticket):
+        await ctx.send(
+            f"Sorry, your ticket with barcode {barcode} was already used! {assistance}"
+        )
+        return await log(
+            f"{member.name} tried and failed to register a ticket with the "
+            f"barcode {barcode} as it was already registered!"
         )
 
     await member.add_roles(server_info.attendee)
@@ -44,3 +60,4 @@ async def register(ctx, barcode: str):
     await log(
         f"{member.mention} was successfully registered with ticket {ticket.barcode}"
     )
+    await register_ticket(ticket, member)

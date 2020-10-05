@@ -1,12 +1,12 @@
 import logging
 import os
-from regbot.tasks import QuicketSync
 import sys
 
-from regbot import bot
-import regbot.events  # noqa: F401
 import regbot.commands  # noqa: F401
+import regbot.events  # noqa: F401
+from regbot import bot
 from regbot.helpers import get_str_env
+from regbot.tasks import QuicketSync
 
 TOKEN = get_str_env("DISCORD_TOKEN")
 LOGGING_LEVEL = os.getenv("LOGGING_LEVEL", "INFO")

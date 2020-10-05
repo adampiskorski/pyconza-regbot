@@ -1,12 +1,14 @@
-from regbot.quicket import update_ticket_cache
 from discord.ext import commands, tasks
 
 from regbot.helpers import get_int_env, log
+from regbot.quicket import update_ticket_cache
 
 CACHE_EXPIRE_MINUTES = get_int_env("QUICKET_CACHE_EXPIRE_MINUTES")
 
 
 class QuicketSync(commands.Cog):
+    """For keeping the quicket database in sync"""
+
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.sync.start()

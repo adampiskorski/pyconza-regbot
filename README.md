@@ -24,6 +24,18 @@ Set the following environmental variables
 * QUICKET_CACHE_EXPIRE_MINUTES: How often to call the Quicket guest list endpoint for updated Ticket information.
 * QUICKET_EVENT_ID: The conference's Quicket event ID.
 
+Google sheets is used for state management. The following environmental variables represent the unique following keys of a Google service account json key file:
+
+* GOOGLE_PROJECT_ID: `project_id`
+* GOOGLE_PRIVATE_KEY_ID: `private_key_id`
+* GOOGLE_PRIVATE_KEY: `private_key`
+* GOOGLE_CLIENT_EMAIL: `client_email`
+* GOOGLE_CLIENT_ID: `client_id`
+* GOOGLE_CLIENT_X509_CERT_URL: `client_x509_cert_url`
+
+* GOOGLE_SHEET_ID: The ID of the spread sheet to use for state management.
+* GOOGLE_SHEET_WORKSHEET_NAME: The human readable name of the specific sheet to use
+
 ## Run
 
 Using [poetry](https://python-poetry.org/)

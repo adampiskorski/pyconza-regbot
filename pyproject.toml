@@ -8,6 +8,7 @@ authors = ["Adam Piskorski <adam@piskorski.me>"]
 python = "^3.8"
 "discord.py" = "^1.4.1"
 httpx = "^0.14.3"
+gspread-asyncio = "^1.2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

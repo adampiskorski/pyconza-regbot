@@ -1,7 +1,5 @@
 from regbot import bot
-from regbot.helpers import ServerInfo, log
-from regbot.helpers import get_str_env
-
+from regbot.helpers import ServerInfo, get_str_env, log
 
 EVENT_NAME = get_str_env("EVENT_NAME")
 
