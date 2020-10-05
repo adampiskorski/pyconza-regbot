@@ -1,9 +1,8 @@
 from datetime import datetime
 
+import gspread_asyncio
 from discord import User
 from google.oauth2.service_account import Credentials
-from gspread.exceptions import CellNotFound
-import gspread_asyncio
 from gspread_asyncio import AsyncioGspreadWorksheet
 
 from regbot.helpers import get_str_env, log
@@ -48,11 +47,11 @@ async def get_worksheet() -> AsyncioGspreadWorksheet:
 async def is_ticket_used(ticket: Ticket) -> bool:
     """Check if the given ticket exists (was registered) in the sheet"""
     work_sheet = await get_worksheet()
-    try:
-        await work_sheet.find(ticket.barcode)
+    # r = await work_sheet.find(ticket.barcode)
+    cells = await work_sheet.findall(ticket.barcode)
+    if cells and [c for c in cells if c.col == 1]:
         return True
-    except CellNotFound:
-        return False
+    return False
 
 
 async def register_ticket(ticket: Ticket, member: User) -> bool:
