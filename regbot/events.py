@@ -36,7 +36,7 @@ async def on_member_join(member):
     await log(f"{member.mention} has been greeted via DM.")
     # Needed, otherwise a user who can't see history in a channel won't see a message
     # posted there if it's posted too soon after joining.
-    await sleep(3)
+    await sleep(7)
     await server_info.welcome_channel.send(
         f"Welcome {member.mention} to {EVENT_NAME}! Please register your ticket with me "
         "in the Direct Message channel that I created with you..."
