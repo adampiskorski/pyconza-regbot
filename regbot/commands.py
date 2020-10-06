@@ -56,7 +56,7 @@ async def register(ctx, barcode: str):
         await log(f"{ticket.full_name} was truncated to {truncated_name}")
 
     await ctx.send(
-        f"Registration successfull! Thank you for registering for {EVENT_NAME}! "
+        f"Registration successful! Thank you for registering for {EVENT_NAME}! "
         f"We hope that you enjoy your stay {ticket.full_name}!"
     )
     await log(
