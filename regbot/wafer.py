@@ -21,8 +21,6 @@ async def update_speakers_cache() -> None:
     async with httpx.AsyncClient() as client:
         speakers_uids: Set[int] = set()
 
-        global SPEAKERS_TICKETS
-
         next_url = urljoin(BASE_URL, TALKS_URL)
         while next_url is not None:
             r = await client.get(next_url, auth=(USERNAME, PASSWORD))
@@ -42,7 +40,7 @@ async def update_speakers_cache() -> None:
             d = r.json()
             for result in d["results"]:
                 if result["user"] in speakers_uids:
-                    SPEAKERS_TICKETS.add(result["barcode"])
+                    SPEAKERS_TICKETS.add(str(result["barcode"]))
             next_url = d["next"]
             if next_url is not None:
                 await sleep(
