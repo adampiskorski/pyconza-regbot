@@ -1,5 +1,3 @@
-from asyncio import sleep
-
 from regbot import bot
 from regbot.helpers import ServerInfo, get_str_env, log
 
@@ -34,9 +32,6 @@ async def on_member_join(member):
         f" {server_info.help_desk.mention}, or from an organizer."
     )
     await log(f"{member.mention} has been greeted via DM.")
-    # Needed, otherwise a user who can't see history in a channel won't see a message
-    # posted there if it's posted too soon after joining.
-    await sleep(5)
     await server_info.welcome_channel.send(
         f"Welcome {member.mention} to {EVENT_NAME}! Please register your ticket with me "
         "in the Direct Message channel that I created with you..."
