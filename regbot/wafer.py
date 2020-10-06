@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 
 import httpx
 
-from regbot.helpers import get_str_env
+from regbot.helpers import get_str_env, log
 
 USERNAME = get_str_env("WAFER_USERNAME")
 PASSWORD = get_str_env("WAFER_PASSWORD")
@@ -52,4 +52,7 @@ async def update_speakers_cache() -> None:
 
 async def is_barcode_belong_to_speaker(barcode: str) -> bool:
     """Check if the given barcode is of a ticket owned by a speaker."""
+    await log(
+        f"DEBUG: Checking if {barcode} in SPEAKERS_TICKETS: {SPEAKERS_TICKETS} Result: {barcode in SPEAKERS_TICKETS}"
+    )
     return barcode in SPEAKERS_TICKETS
