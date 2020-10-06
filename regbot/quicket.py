@@ -48,10 +48,10 @@ async def update_ticket_cache() -> None:
         for result in r.json()["results"]:
             info = result["TicketInformation"]
             ticket = Ticket(
-                barcode=info["Ticket Barcode"],
-                valid=info["Valid"],
-                first_name=info["First name"],
-                surname=info["Surname"],
+                barcode=str(info["Ticket Barcode"]),
+                valid=bool(info["Valid"]),
+                first_name=str(info["First name"]),
+                surname=str(info["Surname"]),
             )
             if ticket.barcode in TICKETS:
                 await log(

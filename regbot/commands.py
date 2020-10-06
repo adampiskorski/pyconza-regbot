@@ -63,9 +63,6 @@ async def register(ctx, barcode: str):
         f"{member.mention} was successfully registered with ticket {ticket.barcode}"
     )
 
-    await log(
-        f"DEBUG: Checking if {member.mention} is a speaker with barcode {ticket.barcode}..."
-    )
     if await is_barcode_belong_to_speaker(barcode):
         await member.add_roles(server_info.speaker)
         await log(f"{member.mention} has been given the speaker role!")
