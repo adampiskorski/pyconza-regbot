@@ -33,7 +33,7 @@ async def on_member_join(member):
     )
     await log(f"{member.mention} has been greeted via DM.")
     await server_info.welcome_channel.send(
-        f"Welcome {member.mention} to {EVENT_NAME}! Please register your ticket with me "
+        f"Welcome to {EVENT_NAME}, {member.mention}! Please register your ticket with me "
         "in the Direct Message channel that I created with you..."
     )
 
