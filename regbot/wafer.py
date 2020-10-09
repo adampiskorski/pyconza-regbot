@@ -75,7 +75,7 @@ async def mark_as_announced(event: Event) -> None:
     ANNOUNCED_EVENT_NAMES.add(event.name)
 
 
-async def all_upcomming_events(minutes: Optional[int] = None) -> Set[Event]:
+async def all_upcoming_events(minutes: Optional[int] = None) -> Set[Event]:
     """All upcoming events that have yet to be announced. If minutes are given, then it
     will only mention the events comming up in the given number of minutes.
     """

@@ -3,7 +3,7 @@ from discord.ext import commands, tasks
 from regbot.helpers import ServerInfo, get_int_env, log
 from regbot.quicket import update_ticket_cache
 from regbot.wafer import (
-    all_upcomming_events,
+    all_upcoming_events,
     mark_as_announced,
     update_calendar_cache,
     update_speakers_cache,
@@ -66,9 +66,7 @@ class WaferSync(commands.Cog):
     async def announcement_loop(self):
         """Regular check for events to announce, then do so and cache to avoid repeating."""
         server_info = await ServerInfo.get()
-        events = await all_upcomming_events(
-            minutes=WAFER_UPCOMING_EVENTS_BOUNDARY_MINUTES
-        )
+        events = await all_upcoming_events(minutes=WAFER_UPCOMING_EVENTS_BOUNDARY_MINUTES)
         for event in events:
             await server_info.announcement_channel.send(
                 f"{server_info.guild.default_role} The event **{event.name}** is "
