@@ -42,6 +42,8 @@ ORGANIZER_ROLE = get_str_env("DISCORD_ORGANIZER_ROLE")
 SPEAKER_ROLE = get_str_env("DISCORD_SPEAKER_ROLE")
 HELP_DESK = get_int_env("DISCORD_HELPDESK_CHANNEL_ID")
 WELCOME_CHANNEL = get_int_env("DISCORD_WELCOME_CHANNEL_ID")
+ANNOUNCEMENT_CHANNEL = get_int_env("DISCORD_ANNOUNCEMENT_CHANNEL_ID")
+
 GUILD_ID = get_int_env("DISCORD_GUILD_ID")
 
 
@@ -49,13 +51,14 @@ GUILD_ID = get_int_env("DISCORD_GUILD_ID")
 class ServerInfo:
     """A representation of data to be retrieved only once from the discord server"""
 
+    guild: Guild
     attendee: Role
     registration: Role
     organizer: Role
     speaker: Role
     help_desk: TextChannel
     welcome_channel: TextChannel
-    guild: Guild
+    announcement_channel: TextChannel
 
     @classmethod
     async def get(cls) -> ServerInfo:
@@ -84,6 +87,11 @@ class ServerInfo:
             welcome_channel = bot.get_channel(WELCOME_CHANNEL)
             assert welcome_channel is not None, "The general channel was not found!"
 
+            announcement_channel = bot.get_channel(ANNOUNCEMENT_CHANNEL)
+            assert (
+                announcement_channel is not None
+            ), "The announcement channel was not found!"
+
             SERVER_INFO_CACHE = cls(
                 guild=guild,
                 attendee=attendee,
@@ -92,6 +100,7 @@ class ServerInfo:
                 speaker=speaker,
                 help_desk=help_desk,
                 welcome_channel=welcome_channel,
+                announcement_channel=announcement_channel,
             )
 
         return SERVER_INFO_CACHE

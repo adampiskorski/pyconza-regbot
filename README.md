@@ -15,6 +15,7 @@ Set the following environmental variables
 * DISCORD_LOG_CHANNEL_ID: The discord channel where bot log messages (errors and successes) will be sent to.
 * DISCORD_HELPDESK_CHANNEL_ID: The help desk channel
 * DISCORD_WELCOME_CHANNEL_ID: The channel used for greetings
+* DISCORD_ANNOUNCEMENT_CHANNEL_ID: The channel that calendar announcements are made in
 * DISCORD_GUILD_ID: The conference's discord server ID (yes, one conference server at a time)
 * DISCORD_REGISTERED_ROLE_NAME: The name of the attendee role
 * DISCORD_REGISTRATION_ROLE: The name of the registration role
@@ -46,6 +47,7 @@ For use with the PyConZA site and wafer:
 * WAFER_TICKETS_ENDPOINT: The endpoint URL of the tickets API.
 * WAFER_TALKS_ENDPOINT: The endpoint URL of the talks API.
 * WAFER_CACHE_EXPIRE_MINUTES: How often to call the Wafer tickets and talks endpoints for an updated speakers list.
+* WAFER_ICS_ENDPOINT: The ICal endpoint for calendar information.
 
 ## Run
 
