@@ -49,6 +49,8 @@ For use with the PyConZA site and wafer:
 * WAFER_CACHE_EXPIRE_MINUTES: How often to call the Wafer tickets and talks endpoints for an updated speakers list.
 * WAFER_ICS_ENDPOINT: The ICal endpoint for calendar information.
 
+* YOUTUBE_KEY: The API key created to access the YouTube Data API V3
+
 Feature flags that turns certain features on or off. Note that some features, like registration, requires Wafer and Quicket Sync:
 
 * FEATURE_REGISTRATION: Chat commands and events for registration
