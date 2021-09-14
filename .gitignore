@@ -1,4 +1,3 @@
-.vscode/
 .env
 .mypy_cache/
 __pycache__/
