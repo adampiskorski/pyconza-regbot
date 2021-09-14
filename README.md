@@ -49,6 +49,13 @@ For use with the PyConZA site and wafer:
 * WAFER_CACHE_EXPIRE_MINUTES: How often to call the Wafer tickets and talks endpoints for an updated speakers list.
 * WAFER_ICS_ENDPOINT: The ICal endpoint for calendar information.
 
+Feature flags that turns certain features on or off. Note that some features, like registration, requires Wafer and Quicket Sync:
+
+* FEATURE_REGISTRATION: Chat commands and events for registration
+* FEATURE_WAFER_SYNC:  The regular syncing of data with Wafer
+* FEATURE_QUICKET_SYNC: The regular syncing of data with Quicket
+* FEATURE_YOUTUBE_CHAT: For syncing YouTube channels 
+
 ## Run
 
 Using [poetry](https://python-poetry.org/)
