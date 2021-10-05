@@ -60,15 +60,15 @@ def get_bearer_token_dict() -> dict:
 def get_client_credentials():
     """Uses client oAuth 2 flow to get client credentials"""
     global CLIENT_CREDENTIALS_CACHE
-    if CLIENT_CREDENTIALS_CACHE is None:
-        try:
-            with open(CLIENT_CREDENTIALS_PICKLE_FILE, "rb") as handle:
-                CLIENT_CREDENTIALS_CACHE = pickle.load(handle)
-        except FileNotFoundError:
-            pass
     if CLIENT_CREDENTIALS_CACHE is not None:
         return CLIENT_CREDENTIALS_CACHE
 
+    try:
+        with open(CLIENT_CREDENTIALS_PICKLE_FILE, "rb") as handle:
+            CLIENT_CREDENTIALS_CACHE = pickle.load(handle)
+        return CLIENT_CREDENTIALS_CACHE
+    except FileNotFoundError:
+        pass
     client_config = {
         "web": {
             "client_id": CLIENT_ID,
