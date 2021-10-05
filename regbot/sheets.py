@@ -2,39 +2,15 @@ from datetime import datetime
 
 import gspread_asyncio
 from discord import User
-from google.oauth2.service_account import Credentials
 from gspread_asyncio import AsyncioGspreadWorksheet
 
-from regbot.helpers import get_str_env, log
+from regbot.google import get_creds, get_str_env
+from regbot.helpers import log
 from regbot.quicket import Ticket
 
-SERVICE_ACCOUNT = dict(
-    type="service_account",
-    project_id=get_str_env("GOOGLE_PROJECT_ID"),
-    private_key_id=get_str_env("GOOGLE_PRIVATE_KEY_ID"),
-    private_key=get_str_env("GOOGLE_PRIVATE_KEY").replace("\\n", "\n"),
-    client_email=get_str_env("GOOGLE_CLIENT_EMAIL"),
-    client_id=get_str_env("GOOGLE_CLIENT_ID"),
-    auth_uri="https://accounts.google.com/o/oauth2/auth",
-    token_uri="https://oauth2.googleapis.com/token",
-    auth_provider_x509_cert_url="https://www.googleapis.com/oauth2/v1/certs",
-    client_x509_cert_url=get_str_env("GOOGLE_CLIENT_X509_CERT_URL"),
-)
+client_manager = gspread_asyncio.AsyncioGspreadClientManager(get_creds)
 SHEET_ID = get_str_env("GOOGLE_SHEET_ID")
 WORKSHEET = get_str_env("GOOGLE_SHEET_WORKSHEET_NAME")
-SCOPES = [
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive.file",
-    "https://www.googleapis.com/auth/drive",
-]
-
-
-def get_creds() -> Credentials:
-    """Get the Google credentials needed to access the Google sheet"""
-    return Credentials.from_service_account_info(SERVICE_ACCOUNT, scopes=SCOPES)
-
-
-client_manager = gspread_asyncio.AsyncioGspreadClientManager(get_creds)
 
 
 async def get_worksheet() -> AsyncioGspreadWorksheet:
