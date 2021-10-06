@@ -37,14 +37,17 @@ def get_all_broadcasts() -> List[dict]:
         "live_chat_id": For the Q&A command to use.
     """
     youtube = get_youtube()
+    video_ids = []
 
     request = youtube.playlistItems().list(
-        part="contentDetails", playlistId=YOUTUBE_PLAYLIST
+        part="contentDetails", playlistId=YOUTUBE_PLAYLIST, maxResults=50
     )
     response = request.execute()
     video_ids = [item["contentDetails"]["videoId"] for item in response["items"]]
 
-    request = youtube.liveBroadcasts().list(part="snippet", id=",".join(video_ids))
+    request = youtube.liveBroadcasts().list(
+        part="snippet", id=",".join(video_ids), maxResults=50
+    )
     response = request.execute()
     broadcasts = []
     for item in response["items"]:
