@@ -82,13 +82,17 @@ async def log(message: str):
     """Helper to log to discord as well as standard logging"""
     logging.info(message)
     channel = bot.get_channel(LOG_CHANNEL)
-    await channel.send(message)
+    assert channel is not None, "Need a log channel!"
+    await safe_send_message(channel, message)
 
 
 ATTENDEE_ROLE = get_str_env("DISCORD_REGISTERED_ROLE_NAME")
 REGISTRATION_ROLE = get_str_env("DISCORD_REGISTRATION_ROLE")
 ORGANIZER_ROLE = get_str_env("DISCORD_ORGANIZER_ROLE")
 SPEAKER_ROLE = get_str_env("DISCORD_SPEAKER_ROLE")
+SPONSOR_PATRON_ROLE = get_str_env("DISCORD_SPONSOR_PATRON_ROLE")
+SPONSOR_SILVER_ROLE = get_str_env("DISCORD_SPONSOR_SILVER_ROLE")
+SPONSOR_GOLD_ROLE = get_str_env("DISCORD_SPONSOR_GOLD_ROLE")
 HELP_DESK = get_int_env("DISCORD_HELPDESK_CHANNEL_ID")
 WELCOME_CHANNEL = get_int_env("DISCORD_WELCOME_CHANNEL_ID")
 ANNOUNCEMENT_CHANNEL = get_int_env("DISCORD_ANNOUNCEMENT_CHANNEL_ID")
@@ -106,6 +110,9 @@ class ServerInfo:
     registration: Role
     organizer: Role
     speaker: Role
+    patron_sponsor: Role
+    silver_sponsor: Role
+    gold_sponsor: Role
     help_desk: TextChannel
     welcome_channel: TextChannel
     announcement_channel: TextChannel
@@ -132,6 +139,15 @@ class ServerInfo:
             speaker = get(guild.roles, name=SPEAKER_ROLE)
             assert speaker is not None, "The speaker role was not found!"
 
+            patron_sponsor = get(guild.roles, name=SPONSOR_PATRON_ROLE)
+            assert patron_sponsor is not None, "The patron sponsor role was not found!"
+
+            silver_sponsor = get(guild.roles, name=SPONSOR_SILVER_ROLE)
+            assert silver_sponsor is not None, "The silver sponsor role was not found!"
+
+            gold_sponsor = get(guild.roles, name=SPONSOR_GOLD_ROLE)
+            assert gold_sponsor is not None, "The gold sponsor role was not found!"
+
             help_desk = bot.get_channel(HELP_DESK)
             assert help_desk is not None, "The help desk channel was not found!"
 
@@ -156,6 +172,9 @@ class ServerInfo:
                 welcome_channel=welcome_channel,
                 announcement_channel=announcement_channel,
                 youtube_category=youtube_category,
+                patron_sponsor=patron_sponsor,
+                silver_sponsor=silver_sponsor,
+                gold_sponsor=gold_sponsor,
             )
 
         return SERVER_INFO_CACHE

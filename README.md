@@ -21,6 +21,9 @@ Set the following environmental variables
 - DISCORD_REGISTRATION_ROLE: The name of the registration role
 - DISCORD_ORGANIZER_ROLE: The name of the organizer role
 - DISCORD_SPEAKER_ROLE: The name of the speaker role
+- DISCORD_SPONSOR_PATRON_ROLE: The name of the patron sponsor role
+- DISCORD_SPONSOR_SILVER_ROLE: The name of the silver sponsor role
+- DISCORD_SPONSOR_GOLD_ROLE: The name of the gold sponsor role
 
 - QUICKET_USER_TOKEN: The [user token](https://www.quicket.co.za/account/users/apikeys.aspx) (from personal profile) for Quicket. It needs to be of the user which created the Quicket event in order to have sufficient permissions to access the guest list endpoint.
 - QUICKET_API_KEY: The API key from Quicket's [developer portal](https://developer.quicket.co.za/)

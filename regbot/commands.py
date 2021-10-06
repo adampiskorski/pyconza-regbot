@@ -76,14 +76,32 @@ if FEATURE_REGISTRATION:
             f"{member.mention} was successfully registered with ticket {ticket.barcode}"
         )
 
+        await register_ticket(ticket, member)
+
         if await is_barcode_belong_to_speaker(barcode):
             await member.add_roles(server_info.speaker)
-            await log(f"{member.mention} has been given the speaker role!")
+            await log(f"{member.mention} has been given the speaker role.")
             await ctx.send(
                 "I have also detected that you are a speaker and have assigned you that role."
             )
 
-        await register_ticket(ticket, member)
+        ticket_type = ticket.type.lower()
+        if "sponsor" in ticket_type:
+            for level, role in (
+                ("gold", server_info.gold_sponsor),
+                ("silver", server_info.silver_sponsor),
+                ("patron", server_info.patron_sponsor),
+            ):
+                if level in ticket_type:
+                    await member.add_roles(role)
+                    await log(
+                        f"{member.mention} has been given the " f"{role.name} role."
+                    )
+                    await ctx.send(
+                        "I have also detected that you are a sponsor and have assigned you "
+                        "that role."
+                    )
+                    break
 
 
 if FEATURE_YOUTUBE:

@@ -23,6 +23,7 @@ class Ticket:
     valid: bool
     first_name: str
     surname: str
+    type: str
 
     @property
     def full_name(self) -> str:
@@ -52,6 +53,7 @@ async def update_ticket_cache() -> None:
                 valid=bool(info["Valid"]),
                 first_name=str(info["First name"]),
                 surname=str(info["Surname"]),
+                type=str(info["Ticket Type"]),
             )
             if ticket.barcode in TICKETS:
                 await log(
