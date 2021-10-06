@@ -1,6 +1,7 @@
 from discord.errors import Forbidden
 
 from regbot import bot
+from regbot.youtube import get_broadcast_channels, get_youtube
 from regbot.helpers import ServerInfo, get_bool_env, get_str_env, log
 from regbot.quicket import get_ticket_by_barcode
 from regbot.sheets import is_ticket_used, register_ticket
@@ -8,6 +9,10 @@ from regbot.wafer import is_barcode_belong_to_speaker
 
 EVENT_NAME = get_str_env("EVENT_NAME")
 FEATURE_REGISTRATION = get_bool_env("FEATURE_REGISTRATION")
+FEATURE_YOUTUBE = get_bool_env("FEATURE_YOUTUBE")
+BASE_URL = "https://youtube.googleapis.com/youtube/v3/"
+MESSAGES_URL = "liveChat/messages"
+LIVE_BROADCAST_URL = "liveBroadcasts"
 
 if FEATURE_REGISTRATION:
 
@@ -26,7 +31,8 @@ if FEATURE_REGISTRATION:
 
         if ticket is None:
             await ctx.send(
-                f"Sorry, I could not find a ticket with the barcode {barcode}. {assistance}"
+                f"Sorry {member.name}, I could not find a ticket with the barcode "
+                f"{barcode}. {assistance}"
             )
             return await log(
                 f"{member.name} tried and failed to register a ticket with the "
@@ -35,7 +41,8 @@ if FEATURE_REGISTRATION:
 
         if await is_ticket_used(ticket):
             await ctx.send(
-                f"Sorry, your ticket with barcode {barcode} was already used! {assistance}"
+                f"Sorry {member.name}, your ticket with barcode {barcode} was already "
+                f"used! {assistance}"
             )
             return await log(
                 f"{member.name} tried and failed to register a ticket with the "
@@ -52,10 +59,10 @@ if FEATURE_REGISTRATION:
             )
         if len(ticket.full_name) > len(truncated_name):
             await ctx.send(
-                "We apologize, but we had to truncate your full name on the discord server "
-                "as it was over 32 characters. You are free to modify your own nickname by "
-                f"right clicking on your user name on the {EVENT_NAME} server and selecting "
-                "'Change Nickname'."
+                f"We apologize {member.name}, but we had to truncate your full name on the"
+                " discord server as it was over 32 characters. You are free to modify your"
+                f" own nickname by right clicking on your user name on the {EVENT_NAME} "
+                "server and selecting 'Change Nickname'."
             )
             await log(f"{ticket.full_name} was truncated to {truncated_name}")
 
@@ -75,3 +82,37 @@ if FEATURE_REGISTRATION:
             )
 
         await register_ticket(ticket, member)
+
+
+if FEATURE_YOUTUBE:
+
+    @bot.command("question")
+    async def question(ctx, *question_words):
+        """Echo a question to YouTube"""
+        channels = get_broadcast_channels()
+        if ctx.channel not in channels:
+            await ctx.send(
+                f"Thank you for your question {ctx.author.mention}, however this is "
+                "not a channel dealing with YouTube Broadcasts."
+            )
+            return
+
+        question = " ".join(question_words)
+        live_chat_id = channels[ctx.channel]["live_chat_id"]
+
+        youtube = get_youtube()
+        request = youtube.liveChatMessages().insert(
+            part="snippet",
+            body={
+                "snippet": {
+                    "liveChatId": live_chat_id,
+                    "type": "textMessageEvent",
+                    "textMessageDetails": {
+                        "messageText": f"Question from {ctx.author.display_name}: {question}"
+                    },
+                }
+            },
+        )
+        request.execute()
+
+        await ctx.send(f"Thank you for your question {ctx.author.mention}")

@@ -68,6 +68,11 @@ def get_all_broadcasts() -> List[dict]:
     return broadcasts
 
 
+def get_broadcast_channels() -> CHANNEL_BROADCAST_MAP_TYPE:
+    """Get a dictionary mapping all broadcast channels to YouTube Broadcast information"""
+    return BROADCAST_CHANNELS
+
+
 def get_youtube_link(_id: str) -> str:
     """Get a YouTube link to the video with the given YouTube ID"""
     return f"https://youtu.be/{_id}"
