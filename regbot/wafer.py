@@ -1,11 +1,10 @@
 from asyncio import sleep
 from typing import Optional, Set
 from urllib.parse import urljoin
-from datetime import datetime
 
+import arrow
 import httpx
 from ics import Calendar, Event
-from pytz import utc
 
 from regbot.helpers import get_str_env
 
@@ -80,14 +79,14 @@ async def all_upcoming_events(minutes: Optional[int] = None) -> Set[Event]:
     will only mention the events comming up in the given number of minutes.
     """
     events = set()
-    now = datetime.utcnow().replace(tzinfo=utc)
+    now = arrow.utcnow()
     for event in EVENTS_CACHE:
         diff = (event.begin - now).total_seconds()
         diff_minutes = round(diff / 60)
-        if event.name not in ANNOUNCED_EVENT_NAMES and diff > 0:
-            if minutes:
-                if diff_minutes <= minutes:
-                    events.add(event)
-            else:
-                events.add(event)
+        if (
+            event.name not in ANNOUNCED_EVENT_NAMES
+            and diff > 0
+            and (minutes and diff_minutes <= minutes or not minutes)
+        ):
+            events.add(event)
     return events

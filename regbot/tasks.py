@@ -7,6 +7,7 @@ from regbot.helpers import (
     ServerInfo,
     get_int_env,
     log,
+    to_discord_title_safe,
 )
 from regbot.quicket import update_ticket_cache
 from regbot.wafer import (
@@ -16,10 +17,13 @@ from regbot.wafer import (
     update_speakers_cache,
 )
 from regbot.youtube import (
+    all_upcoming_broadcasts,
     get_all_broadcasts,
     get_youtube_link,
+    mark_broadcast_as_announced,
     save_channel_broadcast_map,
 )
+from discord.utils import get
 
 QUICKET_CACHE_EXPIRE_MINUTES = get_int_env("QUICKET_CACHE_EXPIRE_MINUTES")
 WAFER_CACHE_EXPIRE_MINUTES = get_int_env("WAFER_CACHE_EXPIRE_MINUTES")
@@ -27,6 +31,12 @@ WAFER_ANNOUNCE_INTERVAL_SECONDS = 30
 WAFER_UPCOMING_EVENTS_BOUNDARY_MINUTES = 5
 
 YOUTUBE_CREATE_CHANNELS_MINUTES = 1
+YOUTUBE_ANNOUNCE_INTERVAL_SECONDS = 10
+YOUTUBE_UPCOMING_BOUNDARY_SECONDS = 20
+assert YOUTUBE_ANNOUNCE_INTERVAL_SECONDS < YOUTUBE_UPCOMING_BOUNDARY_SECONDS, (
+    "The amount of time between checks (interval) must be sorter than how far into the "
+    "future (boundary) broadcasts are announced!"
+)
 
 
 class QuicketSync(commands.Cog):
@@ -82,9 +92,13 @@ class WaferSync(commands.Cog):
         server_info = await ServerInfo.get()
         events = await all_upcoming_events(minutes=WAFER_UPCOMING_EVENTS_BOUNDARY_MINUTES)
         for event in events:
+            channel_title = to_discord_title_safe(event.name)
+            channel = get(server_info.guild.channels, name=channel_title)
+            channel_mention = f"#{channel_title}" if channel is None else channel.mention
             await server_info.announcement_channel.send(
-                f"{server_info.guild.default_role} The event **{event.name}** is "
-                f"happening in {WAFER_UPCOMING_EVENTS_BOUNDARY_MINUTES} minutes!"
+                f"The event **{event.name}** is happening in "
+                f"{WAFER_UPCOMING_EVENTS_BOUNDARY_MINUTES} minutes!\n"
+                f"Please go to {channel_mention} to watch it."
             )
             await mark_as_announced(event)
 
@@ -99,6 +113,7 @@ class YouTubeVideoSync(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.create_channels.start()
+        self.announcement_loop.start()
 
     @staticmethod
     async def purge_duplicate_titled_channels(
@@ -159,7 +174,7 @@ class YouTubeVideoSync(commands.Cog):
                 )
                 await message.pin(reason="Talk link")
                 message = await channel.send(
-                    f"__**Talk description**__:\n{broadcast['description']}"
+                    f"__**Talk description**__:\n{broadcast['original_description']}"
                 )
                 await message.pin(reason="Talk description")
 
@@ -176,5 +191,24 @@ class YouTubeVideoSync(commands.Cog):
             await existing_channels[name].delete(reason=reason)
 
     @create_channels.before_loop
-    async def before_sync(self):
+    async def before_create_channels(self):
+        await self.bot.wait_until_ready()
+
+    @tasks.loop(seconds=YOUTUBE_ANNOUNCE_INTERVAL_SECONDS)
+    async def announcement_loop(self):
+        """Regular check for broadcasts to announce, then do so and cache to avoid
+        repeating.
+        """
+        server_info = await ServerInfo.get()
+        channels = await all_upcoming_broadcasts(
+            seconds=YOUTUBE_UPCOMING_BOUNDARY_SECONDS
+        )
+        for channel in channels:
+            await channel.send(
+                f"{server_info.attendee.mention} This talk is starting now!"
+            )
+            mark_broadcast_as_announced(channel)
+
+    @announcement_loop.before_loop
+    async def before_announcement_loop(self):
         await self.bot.wait_until_ready()

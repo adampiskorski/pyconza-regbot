@@ -42,8 +42,16 @@ def to_discord_title_safe(text: str) -> str:
     channel.
     """
     text = text.replace(" ", "-")
+    text = text[:96]
     text = text.lower()
     return re.sub(r"[^a-zA-Z0-9\-]", "", text)
+
+
+def to_discord_description_safe(text: str) -> str:
+    """Convert the given string to one that will be accepted by discord as a description
+    for a channel.
+    """
+    return text[:1024]
 
 
 LOG_CHANNEL = get_int_env("DISCORD_LOG_CHANNEL_ID")

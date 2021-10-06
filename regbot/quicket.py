@@ -29,7 +29,7 @@ class Ticket:
         return f"{self.first_name} {self.surname}"
 
 
-TICKETS: Dict[str, Ticket] = dict()
+TICKETS: Dict[str, Ticket] = {}
 
 
 async def update_ticket_cache() -> None:
@@ -43,7 +43,7 @@ async def update_ticket_cache() -> None:
         )
 
         global TICKETS
-        TICKETS = dict()
+        TICKETS = {}
 
         for result in r.json()["results"]:
             info = result["TicketInformation"]

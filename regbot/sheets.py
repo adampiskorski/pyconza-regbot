@@ -25,9 +25,7 @@ async def is_ticket_used(ticket: Ticket) -> bool:
     work_sheet = await get_worksheet()
     # r = await work_sheet.find(ticket.barcode)
     cells = await work_sheet.findall(ticket.barcode)
-    if cells and [c for c in cells if c.col == 1]:
-        return True
-    return False
+    return bool(cells and [c for c in cells if c.col == 1])
 
 
 async def register_ticket(ticket: Ticket, member: User) -> bool:
