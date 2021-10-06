@@ -7,6 +7,7 @@ from regbot.helpers import (
     ServerInfo,
     get_int_env,
     log,
+    safe_send_message,
     to_discord_title_safe,
 )
 from regbot.quicket import update_ticket_cache
@@ -173,10 +174,12 @@ class YouTubeVideoSync(commands.Cog):
                     f"__**Talk link**__: {get_youtube_link(broadcast['id'])}"
                 )
                 await message.pin(reason="Talk link")
-                message = await channel.send(
-                    f"__**Talk description**__:\n{broadcast['original_description']}"
+                messages = await safe_send_message(
+                    channel,
+                    f"__**Talk description**__:\n{broadcast['original_description']}",
                 )
-                await message.pin(reason="Talk description")
+                for message in messages:
+                    await message.pin(reason="Talk description")
 
             current_names.add(broadcast["title"])
             channel_broadcast_map[channel] = broadcast

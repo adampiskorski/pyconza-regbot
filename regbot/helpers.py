@@ -1,13 +1,15 @@
 from __future__ import annotations
+import textwrap
 
 import logging
 import os
 import re
 from dataclasses import dataclass
 from distutils.util import strtobool
-from typing import Optional
+from typing import List, Optional
 
-from discord import CategoryChannel, Guild, Role, TextChannel
+from discord import CategoryChannel, Guild, Role, TextChannel, Message
+from discord.abc import Messageable
 from discord.utils import get
 
 from regbot import bot
@@ -44,7 +46,8 @@ def to_discord_title_safe(text: str) -> str:
     text = text.replace(" ", "-")
     text = text[:96]
     text = text.lower()
-    return re.sub(r"[^a-zA-Z0-9\-]", "", text)
+    text = re.sub(r"[^a-zA-Z0-9\-]", "", text)  # Eliminate all non alpha numerics and `-`
+    return re.sub(r"(\-)\1{1,}", "-", text)  # Eliminate repeated `-`
 
 
 def to_discord_description_safe(text: str) -> str:
@@ -52,6 +55,24 @@ def to_discord_description_safe(text: str) -> str:
     for a channel.
     """
     return text[:1024]
+
+
+async def safe_send_message(target: Messageable, text: str) -> List[Message]:
+    """Safely send a message to the given messageable target.
+    The utility of this is function, is that the message will be split into multiple parts
+    if its too long.
+    """
+    messages = []
+    for part in textwrap.wrap(
+        text,
+        width=2000,
+        expand_tabs=False,
+        replace_whitespace=False,
+        drop_whitespace=False,
+    ):
+        message = await target.send(part)
+        messages.append(message)
+    return messages
 
 
 LOG_CHANNEL = get_int_env("DISCORD_LOG_CHANNEL_ID")
