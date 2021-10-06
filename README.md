@@ -55,7 +55,7 @@ For use with the PyConZA site and wafer:
 - WAFER_ICS_ENDPOINT: The ICal endpoint for calendar information.
 
 - YOUTUBE_KEY: The API key created to access the YouTube Data API V3
-- YOUTUBE_DISCORD_CATEGORY: The discord channel category to put YouTube video channels
+- DISCORD_YOUTUBE_CATEGORY: The discord channel category to put YouTube video channels
 - YOUTUBE_PLAYLIST: The ID of the YouTube playlist to check for videos to put into Discord.
 
 Feature flags that turns certain features on or off. Note that some features, like registration, requires Wafer and Quicket Sync:

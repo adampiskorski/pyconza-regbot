@@ -1,6 +1,13 @@
+from typing import List
+
+from discord.channel import TextChannel
 from discord.ext import commands, tasks
 
-from regbot.helpers import ServerInfo, get_int_env, log
+from regbot.helpers import (
+    ServerInfo,
+    get_int_env,
+    log,
+)
 from regbot.quicket import update_ticket_cache
 from regbot.wafer import (
     all_upcoming_events,
@@ -8,11 +15,18 @@ from regbot.wafer import (
     update_calendar_cache,
     update_speakers_cache,
 )
+from regbot.youtube import (
+    get_all_broadcasts,
+    get_youtube_link,
+    save_channel_broadcast_map,
+)
 
 QUICKET_CACHE_EXPIRE_MINUTES = get_int_env("QUICKET_CACHE_EXPIRE_MINUTES")
 WAFER_CACHE_EXPIRE_MINUTES = get_int_env("WAFER_CACHE_EXPIRE_MINUTES")
 WAFER_ANNOUNCE_INTERVAL_SECONDS = 30
 WAFER_UPCOMING_EVENTS_BOUNDARY_MINUTES = 5
+
+YOUTUBE_CREATE_CHANNELS_MINUTES = 1
 
 
 class QuicketSync(commands.Cog):
@@ -76,4 +90,91 @@ class WaferSync(commands.Cog):
 
     @announcement_loop.before_loop
     async def before_announcement_loop(self):
+        await self.bot.wait_until_ready()
+
+
+class YouTubeVideoSync(commands.Cog):
+    """Creates, if not already existing, a discord channel for each YouTube channel"""
+
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
+        self.create_channels.start()
+
+    @staticmethod
+    async def purge_duplicate_titled_channels(
+        channels: List[TextChannel],
+    ) -> List[TextChannel]:
+        """Make sure that only one channel per channel name in the given list remains.
+        Not done in any particular order.
+        """
+        names = set()
+        unique_channels = []
+        for channel in channels:
+            if channel.name in names:
+                reason = f"Deleting duplicate talk channel: `{channel}`"
+                await log(reason)
+                await channel.delete(reason=reason)
+            else:
+                names.add(channel.name)
+                unique_channels.append(channel)
+        return unique_channels
+
+    @tasks.loop(minutes=YOUTUBE_CREATE_CHANNELS_MINUTES)
+    async def create_channels(self):
+        """Create discord channels that mirror YouTube channels if they don't yet exist."""
+        broadcasts = get_all_broadcasts()
+        await log("Found broadcasts, iterating through them...")
+        server_info = await ServerInfo.get()
+        category = server_info.youtube_category
+        existing_channels = await self.purge_duplicate_titled_channels(category.channels)
+        existing_channels = {channel.name: channel for channel in existing_channels}
+
+        current_names = set()
+        channel_broadcast_map = {}
+        for i, broadcast in enumerate(broadcasts):
+            position = 100 if broadcast["over_hour_old"] else i
+            if broadcast["title"] in existing_channels:
+                await log(
+                    f"Found existing channel for, so updating it `{broadcast['title']}`"
+                )
+                channel = existing_channels[broadcast["title"]]
+                await channel.edit(
+                    position=position,
+                    topic=broadcast["description"],
+                )
+            else:
+                await log(f"Creating channel for talk: `{broadcast['title']}`")
+                channel = await category.create_text_channel(
+                    name=broadcast["title"],
+                    reason="Talk YouTube channel",
+                    position=position,
+                    topic=broadcast["description"],
+                )
+                message = await channel.send(
+                    f"__**Talk title**__: {broadcast['original_title']}"
+                )
+                await message.pin(reason="Talk title")
+                message = await channel.send(
+                    f"__**Talk link**__: {get_youtube_link(broadcast['id'])}"
+                )
+                await message.pin(reason="Talk link")
+                message = await channel.send(
+                    f"__**Talk description**__:\n{broadcast['description']}"
+                )
+                await message.pin(reason="Talk description")
+
+            current_names.add(broadcast["title"])
+            channel_broadcast_map[channel] = broadcast
+        await log("Completed making broadcast channels.")
+        save_channel_broadcast_map(channel_broadcast_map)
+
+        existing_names = set(existing_channels.keys())
+        to_delete = existing_names.difference(current_names)
+        for name in to_delete:
+            reason = f"Deleting {name} as there is no broadcast tied to it."
+            await log(reason)
+            await existing_channels[name].delete(reason=reason)
+
+    @create_channels.before_loop
+    async def before_sync(self):
         await self.bot.wait_until_ready()

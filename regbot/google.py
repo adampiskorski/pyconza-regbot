@@ -1,5 +1,5 @@
 import google_auth_oauthlib.flow
-import googleapiclient.discovery
+
 import pickle
 
 from google.auth.transport.requests import AuthorizedSession, Request
@@ -87,9 +87,3 @@ def get_client_credentials():
     with open(CLIENT_CREDENTIALS_PICKLE_FILE, "wb") as handle:
         pickle.dump(creds, handle)
     return creds
-
-
-def get_youtube():
-    """Returns an authenticated YouTube resource"""
-    credentials = get_client_credentials()
-    return googleapiclient.discovery.build("youtube", "v3", credentials=credentials)

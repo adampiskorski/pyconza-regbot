@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 from dataclasses import dataclass
 from distutils.util import strtobool
 from typing import Optional
 
-from discord import Guild, Role, TextChannel
+from discord import CategoryChannel, Guild, Role, TextChannel
 from discord.utils import get
 
 from regbot import bot
@@ -36,6 +37,15 @@ def get_bool_env(environ_var: str, default: Optional[bool] = False) -> bool:
     return bool(strtobool(value))
 
 
+def to_discord_title_safe(text: str) -> str:
+    """Convert the given string to one that will be accepted by discord as a title for a
+    channel.
+    """
+    text = text.replace(" ", "-")
+    text = text.lower()
+    return re.sub(r"[^a-zA-Z0-9\-]", "", text)
+
+
 LOG_CHANNEL = get_int_env("DISCORD_LOG_CHANNEL_ID")
 
 
@@ -53,6 +63,7 @@ SPEAKER_ROLE = get_str_env("DISCORD_SPEAKER_ROLE")
 HELP_DESK = get_int_env("DISCORD_HELPDESK_CHANNEL_ID")
 WELCOME_CHANNEL = get_int_env("DISCORD_WELCOME_CHANNEL_ID")
 ANNOUNCEMENT_CHANNEL = get_int_env("DISCORD_ANNOUNCEMENT_CHANNEL_ID")
+YOUTUBE_CATEGORY = get_int_env("DISCORD_YOUTUBE_CATEGORY")
 
 GUILD_ID = get_int_env("DISCORD_GUILD_ID")
 
@@ -69,6 +80,7 @@ class ServerInfo:
     help_desk: TextChannel
     welcome_channel: TextChannel
     announcement_channel: TextChannel
+    youtube_category: CategoryChannel
 
     @classmethod
     async def get(cls) -> ServerInfo:
@@ -102,6 +114,9 @@ class ServerInfo:
                 announcement_channel is not None
             ), "The announcement channel was not found!"
 
+            youtube_category = bot.get_channel(YOUTUBE_CATEGORY)
+            assert youtube_category is not None, "The YouTube category was not found!"
+
             SERVER_INFO_CACHE = cls(
                 guild=guild,
                 attendee=attendee,
@@ -111,6 +126,7 @@ class ServerInfo:
                 help_desk=help_desk,
                 welcome_channel=welcome_channel,
                 announcement_channel=announcement_channel,
+                youtube_category=youtube_category,
             )
 
         return SERVER_INFO_CACHE
