@@ -16,6 +16,7 @@ Set the following environmental variables
 - DISCORD_HELPDESK_CHANNEL_ID: The help desk channel
 - DISCORD_WELCOME_CHANNEL_ID: The channel used for greetings
 - DISCORD_ANNOUNCEMENT_CHANNEL_ID: The channel that calendar announcements are made in
+- DISCORD_ANNOUNCEMENT_STAGING_CHANNEL_ID: The channel that the bot will monitor for manual announcements to re-post
 - DISCORD_GUILD_ID: The conference's discord server ID (yes, one conference server at a time)
 - DISCORD_REGISTERED_ROLE_NAME: The name of the attendee role
 - DISCORD_REGISTRATION_ROLE: The name of the registration role
@@ -67,6 +68,7 @@ Feature flags that turns certain features on or off. Note that some features, li
 - FEATURE_WAFER_SYNC: The regular syncing of data with Wafer
 - FEATURE_QUICKET_SYNC: The regular syncing of data with Quicket
 - FEATURE_YOUTUBE: For syncing YouTube channels
+- FEATURE_REPOST_ANNOUNCE: For re-posting message as a bot in the announcements channel
 
 ## Run
 

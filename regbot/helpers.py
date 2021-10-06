@@ -96,6 +96,7 @@ SPONSOR_GOLD_ROLE = get_str_env("DISCORD_SPONSOR_GOLD_ROLE")
 HELP_DESK = get_int_env("DISCORD_HELPDESK_CHANNEL_ID")
 WELCOME_CHANNEL = get_int_env("DISCORD_WELCOME_CHANNEL_ID")
 ANNOUNCEMENT_CHANNEL = get_int_env("DISCORD_ANNOUNCEMENT_CHANNEL_ID")
+ANNOUNCEMENT_STAGING_CHANNEL = get_int_env("DISCORD_ANNOUNCEMENT_STAGING_CHANNEL_ID")
 YOUTUBE_CATEGORY = get_int_env("DISCORD_YOUTUBE_CATEGORY")
 
 GUILD_ID = get_int_env("DISCORD_GUILD_ID")
@@ -116,6 +117,7 @@ class ServerInfo:
     help_desk: TextChannel
     welcome_channel: TextChannel
     announcement_channel: TextChannel
+    announcement_staging_channel: TextChannel
     youtube_category: CategoryChannel
 
     @classmethod
@@ -159,6 +161,11 @@ class ServerInfo:
                 announcement_channel is not None
             ), "The announcement channel was not found!"
 
+            announcement_staging_channel = bot.get_channel(ANNOUNCEMENT_STAGING_CHANNEL)
+            assert (
+                announcement_staging_channel is not None
+            ), "The announcement staging channel was not found!"
+
             youtube_category = bot.get_channel(YOUTUBE_CATEGORY)
             assert youtube_category is not None, "The YouTube category was not found!"
 
@@ -171,6 +178,7 @@ class ServerInfo:
                 help_desk=help_desk,
                 welcome_channel=welcome_channel,
                 announcement_channel=announcement_channel,
+                announcement_staging_channel=announcement_staging_channel,
                 youtube_category=youtube_category,
                 patron_sponsor=patron_sponsor,
                 silver_sponsor=silver_sponsor,

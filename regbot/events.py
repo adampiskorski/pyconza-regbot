@@ -1,8 +1,12 @@
 from regbot import bot
 from regbot.helpers import ServerInfo, get_bool_env, get_str_env, log
+from discord import Reaction
+from discord import User
 
 EVENT_NAME = get_str_env("EVENT_NAME")
 FEATURE_REGISTRATION = get_bool_env("FEATURE_REGISTRATION")
+FEATURE_REPOST_ANNOUNCE = get_bool_env("FEATURE_REPOST_ANNOUNCE")
+REPOST_REACTION = "🔔"
 
 
 @bot.event
@@ -46,3 +50,14 @@ async def on_command_error(ctx, error):
         f"`{ctx.invoked_with}` command got message `{ctx.message.clean_content}` from "
         f"{ctx.author.mention} that caused error: `{error}`"
     )
+
+
+@bot.event
+async def on_reaction_add(reaction: Reaction, user: User):
+    if FEATURE_REPOST_ANNOUNCE:
+        server_info = await ServerInfo.get()
+        if (
+            reaction.emoji == REPOST_REACTION
+            and reaction.message.channel == server_info.announcement_staging_channel
+        ):
+            await server_info.announcement_channel.send(reaction.message.content)
