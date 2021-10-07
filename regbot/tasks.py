@@ -215,8 +215,8 @@ class YouTubeVideoSync(commands.Cog):
                 f"**Talk Link**: {get_youtube_link(broadcast['id'])}"
             )
             await channel.send(
-                "Remember that you can ask a question with "
-                "`!question your question text here`."
+                "Remember that you can ask a question with the `!question` command like "
+                "so:\n`!question your question text here`."
             )
             mark_broadcast_as_announced(channel)
 
