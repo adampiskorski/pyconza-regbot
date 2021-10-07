@@ -30,6 +30,8 @@ Set the following environmental variables
 - QUICKET_API_KEY: The API key from Quicket's [developer portal](https://developer.quicket.co.za/)
 - QUICKET_CACHE_EXPIRE_MINUTES: How often to call the Quicket guest list endpoint for updated Ticket information.
 - QUICKET_EVENT_ID: The conference's Quicket event ID.
+- GOOGLE_SHEET_ID: The ID of the spread sheet to use for registration state management.
+- GOOGLE_SHEET_WORKSHEET_NAME: The human readable name of the specific sheet to use for registration.
 
 Google sheets is used for state management. The following environmental variables represent the unique following keys of a Google service account json key file:
 
@@ -45,9 +47,6 @@ In order to take certain actions on YouTube, you need a valid Google client oAut
 - GOOGLE_OAUTH_CLIENT_ID: Client ID for oAuth flow
 - GOOGLE_OAUTH_CLIENT_SECRET: Secret for oAuth flow
 
-- GOOGLE_SHEET_ID: The ID of the spread sheet to use for state management.
-- GOOGLE_SHEET_WORKSHEET_NAME: The human readable name of the specific sheet to use.
-
 For use with the PyConZA site and wafer:
 
 - WAFER_USERNAME: The username to sign on with.
@@ -58,9 +57,15 @@ For use with the PyConZA site and wafer:
 - WAFER_CACHE_EXPIRE_MINUTES: How often to call the Wafer tickets and talks endpoints for an updated speakers list.
 - WAFER_ICS_ENDPOINT: The ICal endpoint for calendar information.
 
-- YOUTUBE_KEY: The API key created to access the YouTube Data API V3
+For use for YouTube Q&A and channel video syncing:
+
 - DISCORD_YOUTUBE_CATEGORY: The discord channel category to put YouTube video channels
 - YOUTUBE_PLAYLIST: The ID of the YouTube playlist to check for videos to put into Discord.
+
+For use with the 'quiz hunt' game:
+
+- GOOGLE_SHEET_ID: The ID of the spread sheet to use for sourcing the questions and for state management.
+- GOOGLE_SHEET_WORKSHEET_NAME: The human readable name of the specific sheet to use for the quiz.
 
 Feature flags that turns certain features on or off. Note that some features, like registration, requires Wafer and Quicket Sync:
 
@@ -69,6 +74,7 @@ Feature flags that turns certain features on or off. Note that some features, li
 - FEATURE_QUICKET_SYNC: The regular syncing of data with Quicket
 - FEATURE_YOUTUBE: For syncing YouTube channels
 - FEATURE_REPOST_ANNOUNCE: For re-posting message as a bot in the announcements channel
+- FEATURE_QUIZ: Enable the google sheets driven 'quiz hunt' game
 
 ## Run
 
