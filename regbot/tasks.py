@@ -217,6 +217,8 @@ class YouTubeVideoSync(commands.Cog):
             await channel.send(
                 "Remember that you can ask a question with the `!question` command like "
                 "so:\n`!question your question text here`."
+                "\n But remember to keep it short, as it must be no longer than 200 "
+                "characters after we add your name to the question."
             )
             mark_broadcast_as_announced(channel)
 
