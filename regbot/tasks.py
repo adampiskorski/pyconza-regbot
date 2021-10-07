@@ -2,6 +2,7 @@ from typing import List
 
 from discord.channel import TextChannel
 from discord.ext import commands, tasks
+from discord.utils import get
 
 from regbot.helpers import (
     ServerInfo,
@@ -20,11 +21,11 @@ from regbot.wafer import (
 from regbot.youtube import (
     all_upcoming_broadcasts,
     get_all_broadcasts,
+    get_broadcast_channels,
     get_youtube_link,
     mark_broadcast_as_announced,
     save_channel_broadcast_map,
 )
-from discord.utils import get
 
 QUICKET_CACHE_EXPIRE_MINUTES = get_int_env("QUICKET_CACHE_EXPIRE_MINUTES")
 WAFER_CACHE_EXPIRE_MINUTES = get_int_env("WAFER_CACHE_EXPIRE_MINUTES")
@@ -206,9 +207,16 @@ class YouTubeVideoSync(commands.Cog):
         channels = await all_upcoming_broadcasts(
             seconds=YOUTUBE_UPCOMING_BOUNDARY_SECONDS
         )
+        channel_map = get_broadcast_channels()
         for channel in channels:
+            broadcast = channel_map[channel]
             await channel.send(
-                f"{server_info.attendee.mention} This talk is starting now!"
+                f"{server_info.attendee.mention} This talk is starting now!\n"
+                f"**Talk Link**: {get_youtube_link(broadcast['id'])}"
+            )
+            await channel.send(
+                "Remember that you can ask a question with "
+                "`!question your question text here`."
             )
             mark_broadcast_as_announced(channel)
 
