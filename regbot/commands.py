@@ -1,4 +1,5 @@
 from discord.errors import Forbidden
+from googleapiclient.errors import HttpError
 
 from regbot import bot
 from regbot.youtube import get_broadcast_channels, get_youtube
@@ -121,18 +122,33 @@ if FEATURE_YOUTUBE:
         live_chat_id = channels[ctx.channel]["live_chat_id"]
 
         youtube = get_youtube()
+        question = f"Question from {ctx.author.display_name}: {question}"
+        len_question = len(question)
+        if len_question > 200:
+            await ctx.send(
+                f"Thank you for your question {ctx.author.mention}, however your question"
+                f", after we add your name, is {len_question} characters long, but "
+                " YouTube limits it to 200.\n"
+                f"Please reduce your question by at least {len_question - 200} characters."
+            )
+            return
         request = youtube.liveChatMessages().insert(
             part="snippet",
             body={
                 "snippet": {
                     "liveChatId": live_chat_id,
                     "type": "textMessageEvent",
-                    "textMessageDetails": {
-                        "messageText": f"Question from {ctx.author.display_name}: {question}"
-                    },
+                    "textMessageDetails": {"messageText": question},
                 }
             },
         )
-        request.execute()
+        try:
+            request.execute()
+        except HttpError as e:
+            await ctx.send(
+                f"Thank you for your question {ctx.author.mention}, however it was "
+                f"rejected by YouTube for the following reason: {e.reason}"
+            )
+            return
 
         await ctx.send(f"Thank you for your question {ctx.author.mention}")
