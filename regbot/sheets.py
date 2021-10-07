@@ -11,8 +11,19 @@ from regbot.quicket import Ticket
 client_manager = gspread_asyncio.AsyncioGspreadClientManager(get_creds)
 SHEET_ID = get_str_env("GOOGLE_SHEET_ID")
 WORKSHEET = get_str_env("GOOGLE_SHEET_WORKSHEET_NAME")
+REG_BARCODE_COLUMN = 1
+REG_FULL_NAME_COLUMN = 2
+REG_DISCORD_NAME_COLUMN = 3
+REG_DISCORD_ID_COLUMN = 4
+REG_DATE_COLUMN = 5
+
 QUIZ_SHEET_ID = get_str_env("QUIZ_GOOGLE_SHEET_ID")
 QUIZ_WORKSHEET = get_str_env("QUIZ_GOOGLE_SHEET_WORKSHEET_NAME")
+QUIZ_CHANNEL_COLUMN = 1
+QUIZ_ANSWERED_BY_COLUMN = 2
+QUIZ_WRONG_CHANNEL_MESSAGE_COLUMN = 3
+QUIZ_QUESTION_COLUMN = 4
+QUIZ_ANSWER_COLUMN = 5
 
 
 async def get_worksheet(sheet_id: str, worksheet: str) -> AsyncioGspreadWorksheet:
@@ -27,7 +38,7 @@ async def is_ticket_used(ticket: Ticket) -> bool:
     work_sheet = await get_worksheet(SHEET_ID, WORKSHEET)
     # r = await work_sheet.find(ticket.barcode)
     cells = await work_sheet.findall(ticket.barcode)
-    return bool(cells and [c for c in cells if c.col == 1])
+    return bool(cells and [c for c in cells if c.col == REG_BARCODE_COLUMN])
 
 
 async def register_ticket(ticket: Ticket, member: User) -> bool:
@@ -35,13 +46,12 @@ async def register_ticket(ticket: Ticket, member: User) -> bool:
     to the work sheet
     """
     work_sheet = await get_worksheet(SHEET_ID, WORKSHEET)
-    row = [
-        ticket.barcode,
-        ticket.full_name,
-        member.name,
-        str(member.id),
-        str(datetime.now()),
-    ]
+    row = ["", "", "", "", ""]
+    row[REG_BARCODE_COLUMN - 1] = ticket.barcode
+    row[REG_FULL_NAME_COLUMN - 1] = ticket.full_name
+    row[REG_DISCORD_NAME_COLUMN - 1] = member.name
+    row[REG_DISCORD_ID_COLUMN - 1] = str(member.id)
+    row[REG_DATE_COLUMN - 1] = str(datetime.now())
     await work_sheet.append_row(row)
     await log(f"Registering row to sheet: {row}")
     return True
