@@ -110,6 +110,12 @@ if FEATURE_YOUTUBE:
     @bot.command("question")
     async def question(ctx, *question_words):
         """Echo a question to YouTube"""
+        if not question_words:
+            await ctx.send(
+                f"Thank you for your intention to ask a question {ctx.author.mention}, "
+                "however it doesn't look like you gave us a question to ask!"
+            )
+
         channels = get_broadcast_channels()
         if ctx.channel not in channels:
             await ctx.send(
