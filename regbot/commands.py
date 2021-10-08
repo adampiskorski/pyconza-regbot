@@ -171,7 +171,7 @@ if FEATURE_QUIZ:
         Ask "Who is winning? to get the top scorer.
         Ask "Scores?" to get all the scores.
 
-        This command's is not case-sensitive.
+        This commands is not case-sensitive.
         """
         server_info = await ServerInfo.get()
         answer = " ".join(answer_words)
