@@ -51,13 +51,14 @@ class QuizQuestion:
     answerer_id: Optional[int] = field(
         default=None, metadata={"column": QUIZ_ANSWERER_COLUMN}
     )
+    is_final_question: bool = False
 
     @classmethod
     async def get_all_quiz_questions(cls) -> List[QuizQuestion]:
         """Get Convert the given worksheet """
         work_sheet = await get_worksheet(QUIZ_SHEET_ID, QUIZ_WORKSHEET)
         rows = await work_sheet.get_all_values()
-        return [
+        questions = [
             QuizQuestion(
                 row=i + 1,
                 question=row[fields(QuizQuestion)[1].metadata["column"] - 1],
@@ -71,6 +72,8 @@ class QuizQuestion:
             for i, row in enumerate(rows)
             if i > 0  # The first row is the header row, so skip it.
         ]
+        questions[-1].is_final_question = True
+        return questions
 
     @property
     def cell(self) -> List[Cell]:
@@ -125,9 +128,10 @@ class QuizQuestion:
             )
         )
 
-    @staticmethod
-    def correct_answer_response() -> str:
+    def correct_answer_response(self) -> str:
         """Get a random response to a correct answer"""
+        if self.is_final_question:
+            return "Outstanding, you've completed the final question!"
         follow_up = random.choice(
             (
                 "Please check if there is another question!",
