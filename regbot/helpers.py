@@ -6,7 +6,7 @@ import os
 import re
 from dataclasses import dataclass
 from distutils.util import strtobool
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from discord import CategoryChannel, Guild, Role, TextChannel, Message
 from discord.abc import Messageable
@@ -73,6 +73,14 @@ async def safe_send_message(target: Messageable, text: str) -> List[Message]:
         message = await target.send(part)
         messages.append(message)
     return messages
+
+
+def int_or_none(something: Any) -> Optional[int]:
+    """Safely try to cast to an interger, and if it can't, return none."""
+    try:
+        return int(something)
+    except ValueError:
+        return None
 
 
 LOG_CHANNEL = get_int_env("DISCORD_LOG_CHANNEL_ID")

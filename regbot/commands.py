@@ -2,15 +2,16 @@ from discord.errors import Forbidden
 from googleapiclient.errors import HttpError
 
 from regbot import bot
-from regbot.youtube import get_broadcast_channels, get_youtube
 from regbot.helpers import ServerInfo, get_bool_env, get_str_env, log
 from regbot.quicket import get_ticket_by_barcode
-from regbot.sheets import is_ticket_used, register_ticket
+from regbot.sheets import QuizQuestion, is_ticket_used, register_ticket
 from regbot.wafer import is_barcode_belong_to_speaker
+from regbot.youtube import get_broadcast_channels, get_youtube
 
 EVENT_NAME = get_str_env("EVENT_NAME")
 FEATURE_REGISTRATION = get_bool_env("FEATURE_REGISTRATION")
 FEATURE_YOUTUBE = get_bool_env("FEATURE_YOUTUBE")
+FEATURE_QUIZ = get_bool_env("FEATURE_QUIZ")
 BASE_URL = "https://youtube.googleapis.com/youtube/v3/"
 MESSAGES_URL = "liveChat/messages"
 LIVE_BROADCAST_URL = "liveBroadcasts"
@@ -111,18 +112,17 @@ if FEATURE_YOUTUBE:
     async def question(ctx, *question_words):
         """Echo a question to YouTube"""
         if not question_words:
-            await ctx.send(
+            return await ctx.send(
                 f"Thank you for your intention to ask a question {ctx.author.mention}, "
                 "however it doesn't look like you gave us a question to ask!"
             )
 
         channels = get_broadcast_channels()
         if ctx.channel not in channels:
-            await ctx.send(
+            return await ctx.send(
                 f"Thank you for your question {ctx.author.mention}, however this is "
                 "not a channel dealing with YouTube Broadcasts."
             )
-            return
 
         question = " ".join(question_words)
         live_chat_id = channels[ctx.channel]["live_chat_id"]
@@ -131,13 +131,12 @@ if FEATURE_YOUTUBE:
         question = f"Question from {ctx.author.display_name}: {question}"
         len_question = len(question)
         if len_question > 200:
-            await ctx.send(
+            return await ctx.send(
                 f"Thank you for your question {ctx.author.mention}, however your question"
                 f", after we add your name, is {len_question} characters long, but "
                 " YouTube limits it to 200.\n"
                 f"Please reduce your question by at least {len_question - 200} characters."
             )
-            return
         request = youtube.liveChatMessages().insert(
             part="snippet",
             body={
@@ -151,10 +150,62 @@ if FEATURE_YOUTUBE:
         try:
             request.execute()
         except HttpError as e:
-            await ctx.send(
+            return await ctx.send(
                 f"Thank you for your question {ctx.author.mention}, however it was "
                 f"rejected by YouTube for the following reason: {e.reason}"
             )
-            return
 
         await ctx.send(f"Thank you for your question {ctx.author.mention}")
+
+
+if FEATURE_QUIZ:
+
+    @bot.command("quiz")
+    async def quiz(ctx, *answer_words):
+        """Participate in the quiz hunt.
+        Just use `!quiz` to get the question, or provide your answer after the `!quiz`
+        command to try and answer the current question.
+        Each question can only be asked in a certain channel, and if you are not in it,
+        you will be given a hint as to which channel that is.
+
+        Ask "Who is winning? to get the top scorer.
+        Ask "Scores?" to get all the scores.
+
+        This command's is not case-sensitive.
+        """
+        server_info = await ServerInfo.get()
+        answer = " ".join(answer_words)
+        no_score_response = "There are no correctly answered questions yet!"
+        if answer.lower() == "who is winning?":
+            result = await QuizQuestion.top_scorer_and_score()
+            if not result:
+                return await ctx.send(no_score_response)
+            _id, score = result
+            member = server_info.guild.get_member(_id)
+            return await ctx.send(
+                f"{member.nick if member else 'Unknown'} with a score of {score}"
+            )
+        if answer.lower() == "scores?":
+            results = await QuizQuestion.scores()
+            if not results:
+                return await ctx.send(no_score_response)
+            scores = []
+            for _id, score in results.items():
+                member = server_info.guild.get_member(_id)
+                scores.append(
+                    f"{member.nick if member else 'Unknown'} with a score of {score}"
+                )
+            return await ctx.send("\n".join(scores))
+        question = await QuizQuestion.get_current_question()
+        if not question:
+            return await ctx.send("Unfortunately, there are no more questions left.")
+        if ctx.channel.id != question.channel_id:
+            return await ctx.send(question.wrong_channel_response)
+        if not answer_words:
+            return await ctx.send(question.question)
+        if answer.lower() == question.answer.lower():
+            await question.mark_as_answered(ctx.author.id)
+            return await ctx.send(
+                f"{ctx.author.mention} {question.correct_answer_response()}"
+            )
+        return await ctx.send(f"{ctx.author.mention} {question.wrong_answer_response()}")
