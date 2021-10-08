@@ -72,7 +72,8 @@ class QuizQuestion:
             for i, row in enumerate(rows)
             if i > 0  # The first row is the header row, so skip it.
         ]
-        questions[-1].is_final_question = True
+        if questions:
+            questions[-1].is_final_question = True
         return questions
 
     @property
