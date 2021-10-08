@@ -96,7 +96,9 @@ class WaferSync(commands.Cog):
         for event in events:
             channel_title = to_discord_title_safe(event.name)
             channel = get(server_info.guild.channels, name=channel_title)
-            channel_mention = f"#{channel_title}" if channel is None else channel.mention
+            channel_mention = (
+                "it's discord channel" if channel is None else channel.mention
+            )
             await server_info.announcement_channel.send(
                 f"The event **{event.name}** is happening in "
                 f"{WAFER_UPCOMING_EVENTS_BOUNDARY_MINUTES} minutes!\n"
