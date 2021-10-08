@@ -151,6 +151,8 @@ class YouTubeVideoSync(commands.Cog):
         current_names = set()
         channel_broadcast_map = {}
         for i, broadcast in enumerate(broadcasts):
+            if broadcast["title"] in current_names:
+                continue
             position = 100 + i if broadcast["over_hour_old"] else i
             if broadcast["title"] in existing_channels:
                 await log(
