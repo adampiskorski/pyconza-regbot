@@ -192,9 +192,13 @@ if FEATURE_QUIZ:
             scores = []
             for _id, score in results.items():
                 member = server_info.guild.get_member(_id)
-                scores.append(
-                    f"{member.nick if member else 'Unknown'} with a score of {score}"
-                )
+                if not member:
+                    name = "Unknown"
+                elif member.nick:
+                    name = member.nick
+                else:
+                    name = member.name
+                scores.append(f"{name} with a score of {score}")
             return await ctx.send("\n".join(scores))
         question = await QuizQuestion.get_current_question()
         if not question:
