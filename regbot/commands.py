@@ -128,7 +128,7 @@ if FEATURE_YOUTUBE:
         live_chat_id = channels[ctx.channel]["live_chat_id"]
 
         youtube = get_youtube()
-        question = f"Question from {ctx.author.display_name}: {question}"
+        question = f"{ctx.author.display_name} asks: {question}"
         len_question = len(question)
         if len_question > 200:
             return await ctx.send(
