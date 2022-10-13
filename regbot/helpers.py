@@ -1,14 +1,14 @@
 from __future__ import annotations
-import textwrap
 
 import logging
 import os
 import re
+import textwrap
 from dataclasses import dataclass
 from distutils.util import strtobool
 from typing import Any, List, Optional
 
-from discord import CategoryChannel, Guild, Role, TextChannel, Message
+from discord import CategoryChannel, Guild, Message, Role, TextChannel
 from discord.abc import Messageable
 from discord.utils import get
 
@@ -101,6 +101,7 @@ SPEAKER_ROLE = get_str_env("DISCORD_SPEAKER_ROLE")
 SPONSOR_PATRON_ROLE = get_str_env("DISCORD_SPONSOR_PATRON_ROLE")
 SPONSOR_SILVER_ROLE = get_str_env("DISCORD_SPONSOR_SILVER_ROLE")
 SPONSOR_GOLD_ROLE = get_str_env("DISCORD_SPONSOR_GOLD_ROLE")
+SPONSOR_PLATINUM_ROLE = get_str_env("DISCORD_SPONSOR_PLATINUM_ROLE")
 HELP_DESK = get_int_env("DISCORD_HELPDESK_CHANNEL_ID")
 WELCOME_CHANNEL = get_int_env("DISCORD_WELCOME_CHANNEL_ID")
 ANNOUNCEMENT_CHANNEL = get_int_env("DISCORD_ANNOUNCEMENT_CHANNEL_ID")
@@ -120,8 +121,9 @@ class ServerInfo:
     organizer: Role
     speaker: Role
     patron_sponsor: Role
-    silver_sponsor: Role
+    # silver_sponsor: Role
     gold_sponsor: Role
+    platinum_sponsor: Role
     help_desk: TextChannel
     welcome_channel: TextChannel
     announcement_channel: TextChannel
@@ -152,11 +154,14 @@ class ServerInfo:
             patron_sponsor = get(guild.roles, name=SPONSOR_PATRON_ROLE)
             assert patron_sponsor is not None, "The patron sponsor role was not found!"
 
-            silver_sponsor = get(guild.roles, name=SPONSOR_SILVER_ROLE)
-            assert silver_sponsor is not None, "The silver sponsor role was not found!"
+            # silver_sponsor = get(guild.roles, name=SPONSOR_SILVER_ROLE)
+            # assert silver_sponsor is not None, "The silver sponsor role was not found!"
 
             gold_sponsor = get(guild.roles, name=SPONSOR_GOLD_ROLE)
             assert gold_sponsor is not None, "The gold sponsor role was not found!"
+
+            platinum_sponsor = get(guild.roles, name=SPONSOR_PLATINUM_ROLE)
+            assert platinum_sponsor is not None, "The platinum sponsor role was not found!"
 
             help_desk = bot.get_channel(HELP_DESK)
             assert help_desk is not None, "The help desk channel was not found!"
@@ -189,8 +194,10 @@ class ServerInfo:
                 announcement_staging_channel=announcement_staging_channel,
                 youtube_category=youtube_category,
                 patron_sponsor=patron_sponsor,
-                silver_sponsor=silver_sponsor,
+                # silver_sponsor=silver_sponsor,
                 gold_sponsor=gold_sponsor,
+                platinum_sponsor=platinum_sponsor
+
             )
 
         return SERVER_INFO_CACHE

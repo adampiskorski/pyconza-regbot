@@ -11,9 +11,9 @@ httpx = "^0.14.3"
 gspread-asyncio = "^1.2.0"
 ics = "^0.7"
 pytz = "^2020.1"
-google-api-python-client = "^2.22.0"
-google-auth = "^2.2.0"
-google-auth-oauthlib = "^0.4.6"
+google-api-python-client = "^2.64.0"
+google-auth = "^2.12.0"
+google-auth-oauthlib = "^0.5.3"
 google-auth-httplib2 = "^0.1.0"
 
 [tool.poetry.dev-dependencies]

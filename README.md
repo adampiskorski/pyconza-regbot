@@ -25,11 +25,13 @@ Set the following environmental variables
 - DISCORD_SPONSOR_PATRON_ROLE: The name of the patron sponsor role
 - DISCORD_SPONSOR_SILVER_ROLE: The name of the silver sponsor role
 - DISCORD_SPONSOR_GOLD_ROLE: The name of the gold sponsor role
+- DISCORD_SPONSOR_PLATINUM_ROLE: The name of the platinum sponsor role
 
 - QUICKET_USER_TOKEN: The [user token](https://www.quicket.co.za/account/users/apikeys.aspx) (from personal profile) for Quicket. It needs to be of the user which created the Quicket event in order to have sufficient permissions to access the guest list endpoint.
 - QUICKET_API_KEY: The API key from Quicket's [developer portal](https://developer.quicket.co.za/)
 - QUICKET_CACHE_EXPIRE_MINUTES: How often to call the Quicket guest list endpoint for updated Ticket information.
 - QUICKET_EVENT_ID: The conference's Quicket event ID.
+
 - GOOGLE_SHEET_ID: The ID of the spread sheet to use for registration state management.
 - GOOGLE_SHEET_WORKSHEET_NAME: The human readable name of the specific sheet to use for registration.
 
