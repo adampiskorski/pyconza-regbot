@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Dict, Optional
 from urllib.parse import urljoin
 
 import httpx
@@ -23,14 +22,14 @@ class Ticket:
     valid: bool
     first_name: str
     surname: str
-    type: str
+    type: str  # noqa: A003
 
     @property
     def full_name(self) -> str:
         return f"{self.first_name} {self.surname}"
 
 
-TICKETS: Dict[str, Ticket] = {}
+TICKETS: dict[str, Ticket] = {}
 
 
 async def update_ticket_cache() -> None:
@@ -64,8 +63,8 @@ async def update_ticket_cache() -> None:
             TICKETS[ticket.barcode] = ticket
 
 
-async def get_ticket_by_barcode(barcode: str) -> Optional[Ticket]:
-    """Query the Quicket guest list for the event or pull for cache if it's still
+async def get_ticket_by_barcode(barcode: str) -> Ticket | None:
+    """Query the Quicket guest list for the event or pull for cache if its still
     fresh.
     """
     return TICKETS.get(barcode)

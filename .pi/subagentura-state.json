@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 2,
+  "parent": "01a10383-08ae-72c3-9471-a35baf9d297e",
+  "telemetry": {
+    "correlationId": "ff1a38a6-7185-4195-a5b7-cd4bd647eeb8",
+    "mode": "straight"
+  },
+  "states": {}
+}

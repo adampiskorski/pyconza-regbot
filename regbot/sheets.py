@@ -3,17 +3,20 @@ from __future__ import annotations
 import random
 from collections import defaultdict
 from dataclasses import dataclass, field, fields
-from datetime import datetime
-from typing import DefaultDict, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING
 
+import arrow
 import gspread_asyncio
-from discord import User
-from gspread.models import Cell
+from gspread import Cell
 from gspread_asyncio import AsyncioGspreadWorksheet
 
 from regbot.google import get_creds, get_str_env
 from regbot.helpers import int_or_none, log
-from regbot.quicket import Ticket
+
+if TYPE_CHECKING:
+    from discord import User
+
+    from regbot.quicket import Ticket
 
 client_manager = gspread_asyncio.AsyncioGspreadClientManager(get_creds)
 SHEET_ID = get_str_env("GOOGLE_SHEET_ID")
@@ -48,14 +51,14 @@ class QuizQuestion:
     answer: str = field(metadata={"column": QUIZ_ANSWER_COLUMN})
     channel_id: int = field(metadata={"column": QUIZ_CHANNEL_COLUMN})
     channel_hint: str = field(metadata={"column": QUIZ_CHANNEL_HINT_COLUMN})
-    answerer_id: Optional[int] = field(
+    answerer_id: int | None = field(
         default=None, metadata={"column": QUIZ_ANSWERER_COLUMN}
     )
     is_final_question: bool = False
 
     @classmethod
-    async def get_all_quiz_questions(cls) -> List[QuizQuestion]:
-        """Get Convert the given worksheet """
+    async def get_all_quiz_questions(cls) -> list[QuizQuestion]:
+        """Get Convert the given worksheet"""
         work_sheet = await get_worksheet(QUIZ_SHEET_ID, QUIZ_WORKSHEET)
         rows = await work_sheet.get_all_values()
         questions = [
@@ -77,7 +80,7 @@ class QuizQuestion:
         return questions
 
     @property
-    def cell(self) -> List[Cell]:
+    def cell(self) -> list[Cell]:
         """Convert the quiz question to list of gspread cells, which effectively
         represents an entire row in the sheet.
         """
@@ -153,35 +156,32 @@ class QuizQuestion:
         )
 
     @classmethod
-    async def scores(cls) -> Dict[int, int]:
+    async def scores(cls) -> dict[int, int]:
         """Returns a an dictionary, representing the answerers ID mapped to the sum of
         correct answers, ordered from the highest to lowest sum.
         """
         questions = await cls.get_all_quiz_questions()
-        sum_dict: DefaultDict[int, int] = defaultdict(int)
+        sum_dict: defaultdict[int, int] = defaultdict(int)
         for question in questions:
             if question.answerer_id:
                 sum_dict[question.answerer_id] += 1
         return dict(sorted(sum_dict.items(), reverse=True, key=lambda x: x[1]))
 
     @classmethod
-    async def top_scorer_and_score(cls) -> Optional[Tuple[int, int]]:
+    async def top_scorer_and_score(cls) -> tuple[int, int] | None:
         """Returns the top scorer (0) and their score (1), with score being the sum of
         correctly answered questions.
         """
         scores = await cls.scores()
-        if scores:
-            return next(iter(scores.items()))
-        return None
+        return next(iter(scores.items())) if scores else None
 
     @classmethod
-    async def get_current_question(cls) -> Optional[QuizQuestion]:
+    async def get_current_question(cls) -> QuizQuestion | None:
         """Get lowest unanswered quiz question object."""
         questions = await cls.get_all_quiz_questions()
-        for question in questions:
-            if not question.answerer_id:
-                return question
-        return None
+        return next(
+            (question for question in questions if not question.answerer_id), None
+        )
 
     async def write_question_to_sheet(self):
         """Writes the current QuizQuestion to the work sheet."""
@@ -199,7 +199,6 @@ class QuizQuestion:
 async def is_ticket_used(ticket: Ticket) -> bool:
     """Check if the given ticket exists (was registered) in the sheet"""
     work_sheet = await get_worksheet(SHEET_ID, WORKSHEET)
-    # r = await work_sheet.find(ticket.barcode)
     cells = await work_sheet.findall(ticket.barcode)
     return bool(cells and [c for c in cells if c.col == REG_BARCODE_COLUMN])
 
@@ -214,7 +213,7 @@ async def register_ticket(ticket: Ticket, member: User) -> bool:
     row[REG_FULL_NAME_COLUMN - 1] = ticket.full_name
     row[REG_DISCORD_NAME_COLUMN - 1] = member.name
     row[REG_DISCORD_ID_COLUMN - 1] = str(member.id)
-    row[REG_DATE_COLUMN - 1] = str(datetime.now())
+    row[REG_DATE_COLUMN - 1] = arrow.utcnow().to("Africa/Johannesburg").format()
     await work_sheet.append_row(row)
     await log(f"Registering row to sheet: {row}")
     return True

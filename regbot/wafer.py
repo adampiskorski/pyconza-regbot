@@ -1,5 +1,4 @@
 from asyncio import sleep
-from typing import Optional, Set
 from urllib.parse import urljoin
 
 import arrow
@@ -16,15 +15,15 @@ TALKS_URL = get_str_env("WAFER_TALKS_ENDPOINT")
 ICS_ENDPOINT = get_str_env("WAFER_ICS_ENDPOINT")
 
 
-SPEAKERS_TICKETS: Set[str] = set()
+SPEAKERS_TICKETS: set[str] = set()
 EVENTS_CACHE: set = set()
-ANNOUNCED_EVENT_NAMES: Set[str] = set()
+ANNOUNCED_EVENT_NAMES: set[str] = set()
 
 
 async def update_speakers_cache() -> None:
     """Update the speakers cache from Wafer"""
     async with httpx.AsyncClient() as client:
-        speakers_uids: Set[int] = set()
+        speakers_uids: set[int] = set()
 
         next_url = urljoin(BASE_URL, TALKS_URL)
         while next_url is not None:
@@ -74,9 +73,9 @@ async def mark_as_announced(event: Event) -> None:
     ANNOUNCED_EVENT_NAMES.add(event.name)
 
 
-async def all_upcoming_events(minutes: Optional[int] = None) -> Set[Event]:
+async def all_upcoming_events(minutes: int | None = None) -> set[Event]:
     """All upcoming events that have yet to be announced. If minutes are given, then it
-    will only mention the events comming up in the given number of minutes.
+    will only mention the events coming up in the given number of minutes.
     """
     events = set()
     now = arrow.utcnow()

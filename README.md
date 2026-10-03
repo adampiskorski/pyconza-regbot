@@ -59,11 +59,6 @@ For use with the PyConZA site and wafer:
 - WAFER_CACHE_EXPIRE_MINUTES: How often to call the Wafer tickets and talks endpoints for an updated speakers list.
 - WAFER_ICS_ENDPOINT: The ICal endpoint for calendar information.
 
-For use for YouTube Q&A and channel video syncing:
-
-- DISCORD_YOUTUBE_CATEGORY: The discord channel category to put YouTube video channels
-- YOUTUBE_PLAYLIST: The ID of the YouTube playlist to check for videos to put into Discord.
-
 For use with the 'quiz hunt' game:
 
 - GOOGLE_SHEET_ID: The ID of the spread sheet to use for sourcing the questions and for state management.
@@ -74,7 +69,6 @@ Feature flags that turns certain features on or off. Note that some features, li
 - FEATURE_REGISTRATION: Chat commands and events for registration
 - FEATURE_WAFER_SYNC: The regular syncing of data with Wafer
 - FEATURE_QUICKET_SYNC: The regular syncing of data with Quicket
-- FEATURE_YOUTUBE: For syncing YouTube channels
 - FEATURE_REPOST_ANNOUNCE: For re-posting message as a bot in the announcements channel
 - FEATURE_QUIZ: Enable the google sheets driven 'quiz hunt' game
 

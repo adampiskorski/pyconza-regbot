@@ -1,7 +1,13 @@
+from discord import Reaction, User
+
 from regbot import bot
+from regbot.google import get_client_credentials
 from regbot.helpers import ServerInfo, get_bool_env, get_str_env, log
-from discord import Reaction
-from discord import User
+from regbot.tasks import QuicketSync, WaferSync, YouTubeVideoSync
+
+FEATURE_WAFER_SYNC = get_bool_env("FEATURE_WAFER_SYNC")
+FEATURE_QUICKET_SYNC = get_bool_env("FEATURE_QUICKET_SYNC")
+FEATURE_YOUTUBE = get_bool_env("FEATURE_YOUTUBE")
 
 EVENT_NAME = get_str_env("EVENT_NAME")
 FEATURE_REGISTRATION = get_bool_env("FEATURE_REGISTRATION")
@@ -14,6 +20,14 @@ async def on_ready():
     await log(f"{bot.user.name} has connected to the following guilds:")
     for guild in bot.guilds:
         await log(f"{guild.name}, ID: {guild.id}")
+    if FEATURE_QUICKET_SYNC:
+        await bot.add_cog(QuicketSync(bot))
+    if FEATURE_WAFER_SYNC:
+        await bot.add_cog(WaferSync(bot))
+    if FEATURE_YOUTUBE:
+        # Get oAuth Credentials on start.
+        credentials = get_client_credentials()
+        bot.add_cog(YouTubeVideoSync(bot))
 
 
 @bot.event

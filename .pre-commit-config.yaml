@@ -1,23 +1,43 @@
+default_language_version:
+    python: python3.11
 repos:
-  - repo: local
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: "v0.0.278"
+    hooks:
+      - id: ruff
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: "v4.4.0"
+    hooks:
+      # See https://pre-commit.com/hooks.html for more hooks
+      - id: check-yaml
+        exclude: "[a-zA-Z]*/(cassettes)/(.)*"
+      - id: check-ast
+      - id: check-case-conflict
+        exclude: "[a-zA-Z]*/(cassettes)/(.)*"
+      - id: check-executables-have-shebangs
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+
+  - repo: https://github.com/psf/black
+    rev: 23.7.0
     hooks:
       - id: black
-        name: black
-        stages: [commit]
-        language: system
-        entry: poetry run black
-        types: [python]
+        exclude: "[a-zA-Z]*/(migrations)/(.)*"
 
-      - id: flake8
-        name: flake8
-        stages: [commit]
-        language: system
-        entry: poetry run flake8
-        types: [python]
-
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: "v1.4.1"
+    hooks:
       - id: mypy
-        name: mypy
-        stages: [commit]
-        language: system
-        entry: poetry run mypy
-        types: [python]
+        exclude: "[a-zA-Z]*/(migrations)/(.)*"
+        additional_dependencies:
+          [
+            "discord-py",
+            "gspread-asyncio",
+            "httpx",
+            "ics",
+            "arrow"
+          ]

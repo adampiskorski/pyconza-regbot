@@ -1,9 +1,10 @@
-import google_auth_oauthlib.flow
-
 import pickle
 
+import google_auth_oauthlib.flow
 from google.auth.transport.requests import AuthorizedSession, Request
 from google.oauth2.service_account import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+
 from regbot.helpers import get_str_env
 
 SERVICE_ACCOUNT = dict(
@@ -79,10 +80,8 @@ def get_client_credentials():
             "client_secret": CLIENT_SECRET,
         }
     }
-    flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_config(
-        client_config, scopes=YOUTUBE_SCOPES
-    )
-    creds = flow.run_console()
+    flow = InstalledAppFlow.from_client_config(client_config, YOUTUBE_SCOPES)
+    creds = flow.run_local_server(port=0)
     CLIENT_CREDENTIALS_CACHE = creds
     with open(CLIENT_CREDENTIALS_PICKLE_FILE, "wb") as handle:
         pickle.dump(creds, handle)

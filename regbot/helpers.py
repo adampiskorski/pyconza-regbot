@@ -6,15 +6,35 @@ import re
 import textwrap
 from dataclasses import dataclass
 from distutils.util import strtobool
-from typing import Any, List, Optional
+from typing import Any
 
-from discord import CategoryChannel, Guild, Message, Role, TextChannel
-from discord.abc import Messageable
+from discord import (
+    CategoryChannel,
+    ForumChannel,
+    Guild,
+    Message,
+    Role,
+    StageChannel,
+    TextChannel,
+    Thread,
+    VoiceChannel,
+)
+from discord.abc import Messageable, PrivateChannel
 from discord.utils import get
+
+ChannelType = (
+    VoiceChannel
+    | StageChannel
+    | ForumChannel
+    | TextChannel
+    | CategoryChannel
+    | Thread
+    | PrivateChannel
+)
 
 from regbot import bot
 
-SERVER_INFO_CACHE = None
+SERVER_INFO_CACHE: ServerInfo | None = None
 
 
 def get_str_env(env_name: str) -> str:
@@ -31,7 +51,7 @@ def get_int_env(env_name: str) -> int:
     return value
 
 
-def get_bool_env(environ_var: str, default: Optional[bool] = False) -> bool:
+def get_bool_env(environ_var: str, default: bool | None = False) -> bool:
     """Somewhat reliably returns a boolean value based on various kinds of `truthy` or
     `falsy` string values in the environment.
     """
@@ -57,7 +77,7 @@ def to_discord_description_safe(text: str) -> str:
     return text[:1024]
 
 
-async def safe_send_message(target: Messageable, text: str) -> List[Message]:
+async def safe_send_message(target: Messageable, text: str) -> list[Message]:
     """Safely send a message to the given messageable target.
     The utility of this is function, is that the message will be split into multiple parts
     if its too long.
@@ -75,8 +95,8 @@ async def safe_send_message(target: Messageable, text: str) -> List[Message]:
     return messages
 
 
-def int_or_none(something: Any) -> Optional[int]:
-    """Safely try to cast to an interger, and if it can't, return none."""
+def int_or_none(something: Any) -> int | None:
+    """Safely try to cast to an integer, and if it can't, return none."""
     try:
         return int(something)
     except ValueError:
@@ -101,7 +121,6 @@ SPEAKER_ROLE = get_str_env("DISCORD_SPEAKER_ROLE")
 SPONSOR_PATRON_ROLE = get_str_env("DISCORD_SPONSOR_PATRON_ROLE")
 SPONSOR_SILVER_ROLE = get_str_env("DISCORD_SPONSOR_SILVER_ROLE")
 SPONSOR_GOLD_ROLE = get_str_env("DISCORD_SPONSOR_GOLD_ROLE")
-SPONSOR_PLATINUM_ROLE = get_str_env("DISCORD_SPONSOR_PLATINUM_ROLE")
 HELP_DESK = get_int_env("DISCORD_HELPDESK_CHANNEL_ID")
 WELCOME_CHANNEL = get_int_env("DISCORD_WELCOME_CHANNEL_ID")
 ANNOUNCEMENT_CHANNEL = get_int_env("DISCORD_ANNOUNCEMENT_CHANNEL_ID")
@@ -121,13 +140,12 @@ class ServerInfo:
     organizer: Role
     speaker: Role
     patron_sponsor: Role
-    # silver_sponsor: Role
+    silver_sponsor: Role
     gold_sponsor: Role
-    platinum_sponsor: Role
-    help_desk: TextChannel
-    welcome_channel: TextChannel
-    announcement_channel: TextChannel
-    announcement_staging_channel: TextChannel
+    help_desk: ChannelType
+    welcome_channel: ChannelType
+    announcement_channel: ChannelType
+    announcement_staging_channel: ChannelType
     youtube_category: CategoryChannel
 
     @classmethod
@@ -154,14 +172,11 @@ class ServerInfo:
             patron_sponsor = get(guild.roles, name=SPONSOR_PATRON_ROLE)
             assert patron_sponsor is not None, "The patron sponsor role was not found!"
 
-            # silver_sponsor = get(guild.roles, name=SPONSOR_SILVER_ROLE)
-            # assert silver_sponsor is not None, "The silver sponsor role was not found!"
+            silver_sponsor = get(guild.roles, name=SPONSOR_SILVER_ROLE)
+            assert silver_sponsor is not None, "The silver sponsor role was not found!"
 
             gold_sponsor = get(guild.roles, name=SPONSOR_GOLD_ROLE)
             assert gold_sponsor is not None, "The gold sponsor role was not found!"
-
-            platinum_sponsor = get(guild.roles, name=SPONSOR_PLATINUM_ROLE)
-            assert platinum_sponsor is not None, "The platinum sponsor role was not found!"
 
             help_desk = bot.get_channel(HELP_DESK)
             assert help_desk is not None, "The help desk channel was not found!"
@@ -194,10 +209,8 @@ class ServerInfo:
                 announcement_staging_channel=announcement_staging_channel,
                 youtube_category=youtube_category,
                 patron_sponsor=patron_sponsor,
-                # silver_sponsor=silver_sponsor,
+                silver_sponsor=silver_sponsor,
                 gold_sponsor=gold_sponsor,
-                platinum_sponsor=platinum_sponsor
-
             )
 
         return SERVER_INFO_CACHE
