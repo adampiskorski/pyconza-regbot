@@ -131,7 +131,6 @@ class QuestionCog(commands.Cog):
         question = " ".join(question_words)
         live_chat_id = channels[ctx.channel]["live_chat_id"]
 
-        youtube = get_youtube()
         question = f"{ctx.author.display_name} asks: {question}"
         len_question = len(question)
         if len_question > 200:
@@ -141,6 +140,7 @@ class QuestionCog(commands.Cog):
                 " YouTube limits it to 200.\n"
                 f"Please reduce your question by at least {len_question - 200} characters."
             )
+        youtube = get_youtube()
         request = youtube.liveChatMessages().insert(
             part="snippet",
             body={

@@ -24,6 +24,7 @@
           pkgs.zlib
           pkgs.libffi
           pkgs.nixpkgs-fmt
+          pkgs.act
         ];
         shellHook = ''
           export UV_PYTHON=${myPython}/bin/python${pythonVersion}

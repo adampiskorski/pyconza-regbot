@@ -1,0 +1,6 @@
+# Run workflows in images that approximate the real GitHub-hosted runners.
+# The default act image (node:16-buster-slim) lacks the tooling that
+# actions/setup-python and pre-commit need.
+-P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-24.04
+-P ubuntu-24.04=ghcr.io/catthehacker/ubuntu:act-24.04
+-P ubuntu-22.04=ghcr.io/catthehacker/ubuntu:act-22.04
