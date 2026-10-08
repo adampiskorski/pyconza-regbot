@@ -5,7 +5,6 @@ import os
 import re
 import textwrap
 from dataclasses import dataclass
-from distutils.util import strtobool
 from typing import Any
 
 from discord import (
@@ -22,6 +21,8 @@ from discord import (
 from discord.abc import Messageable, PrivateChannel
 from discord.utils import get
 
+from regbot import bot
+
 ChannelType = (
     VoiceChannel
     | StageChannel
@@ -31,8 +32,6 @@ ChannelType = (
     | Thread
     | PrivateChannel
 )
-
-from regbot import bot
 
 SERVER_INFO_CACHE: ServerInfo | None = None
 
@@ -51,12 +50,22 @@ def get_int_env(env_name: str) -> int:
     return value
 
 
+def _strtobool(value: str) -> bool:
+    """Parse a string as a boolean (replacement for the removed distutils strtobool)."""
+    value = value.lower()
+    if value in ("y", "yes", "t", "true", "on", "1"):
+        return True
+    if value in ("n", "no", "f", "false", "off", "0"):
+        return False
+    raise ValueError(f"invalid truth value {value!r}")
+
+
 def get_bool_env(environ_var: str, default: bool | None = False) -> bool:
     """Somewhat reliably returns a boolean value based on various kinds of `truthy` or
     `falsy` string values in the environment.
     """
     value = os.getenv(environ_var, str(default))
-    return bool(strtobool(value))
+    return _strtobool(value)
 
 
 def to_discord_title_safe(text: str) -> str:
@@ -185,14 +194,14 @@ class ServerInfo:
             assert welcome_channel is not None, "The general channel was not found!"
 
             announcement_channel = bot.get_channel(ANNOUNCEMENT_CHANNEL)
-            assert (
-                announcement_channel is not None
-            ), "The announcement channel was not found!"
+            assert announcement_channel is not None, (
+                "The announcement channel was not found!"
+            )
 
             announcement_staging_channel = bot.get_channel(ANNOUNCEMENT_STAGING_CHANNEL)
-            assert (
-                announcement_staging_channel is not None
-            ), "The announcement staging channel was not found!"
+            assert announcement_staging_channel is not None, (
+                "The announcement staging channel was not found!"
+            )
 
             youtube_category = bot.get_channel(YOUTUBE_CATEGORY)
             assert youtube_category is not None, "The YouTube category was not found!"

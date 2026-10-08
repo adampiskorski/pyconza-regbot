@@ -19,7 +19,7 @@ LIVE_BROADCAST_URL = "liveBroadcasts"
 if FEATURE_REGISTRATION:
 
     @bot.command("register")
-    async def register(ctx, barcode: str):
+    async def register(ctx, barcode: str):  # noqa: C901
         """Registers the calling user based on their Quicket ticket barcode number."""
         if ctx.channel.type.name != "private":
             await ctx.message.delete()
@@ -96,14 +96,13 @@ if FEATURE_REGISTRATION:
             ):
                 if level in ticket_type:
                     await member.add_roles(role)
-                    await log(
-                        f"{member.mention} has been given the " f"{role.name} role."
-                    )
+                    await log(f"{member.mention} has been given the {role.name} role.")
                     await ctx.send(
                         "I have also detected that you are a sponsor and have assigned you "
                         "that role."
                     )
                     break
+        return None
 
 
 if FEATURE_YOUTUBE:
@@ -155,13 +154,13 @@ if FEATURE_YOUTUBE:
                 f"rejected by YouTube for the following reason: {e.reason}"
             )
 
-        await ctx.send(f"Thank you for your question {ctx.author.mention}")
+        return await ctx.send(f"Thank you for your question {ctx.author.mention}")
 
 
 if FEATURE_QUIZ:
 
     @bot.command("quiz")
-    async def quiz(ctx, *answer_words):
+    async def quiz(ctx, *answer_words):  # noqa: C901
         """Participate in the quiz hunt.
         Just use `!quiz` to get the question, or provide your answer after the `!quiz`
         command to try and answer the current question.

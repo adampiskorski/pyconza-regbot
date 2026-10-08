@@ -85,7 +85,7 @@ async def all_upcoming_events(minutes: int | None = None) -> set[Event]:
         if (
             event.name not in ANNOUNCED_EVENT_NAMES
             and diff > 0
-            and (minutes and diff_minutes <= minutes or not minutes)
+            and ((minutes and diff_minutes <= minutes) or not minutes)
         ):
             events.add(event)
     return events

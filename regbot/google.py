@@ -1,24 +1,23 @@
 import pickle
 
-import google_auth_oauthlib.flow
 from google.auth.transport.requests import AuthorizedSession, Request
 from google.oauth2.service_account import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 
 from regbot.helpers import get_str_env
 
-SERVICE_ACCOUNT = dict(
-    type="service_account",
-    project_id=get_str_env("GOOGLE_PROJECT_ID"),
-    private_key_id=get_str_env("GOOGLE_PRIVATE_KEY_ID"),
-    private_key=get_str_env("GOOGLE_PRIVATE_KEY").replace("\\n", "\n"),
-    client_email=get_str_env("GOOGLE_CLIENT_EMAIL"),
-    client_id=get_str_env("GOOGLE_CLIENT_ID"),
-    auth_uri="https://accounts.google.com/o/oauth2/auth",
-    token_uri="https://oauth2.googleapis.com/token",
-    auth_provider_x509_cert_url="https://www.googleapis.com/oauth2/v1/certs",
-    client_x509_cert_url=get_str_env("GOOGLE_CLIENT_X509_CERT_URL"),
-)
+SERVICE_ACCOUNT = {
+    "type": "service_account",
+    "project_id": get_str_env("GOOGLE_PROJECT_ID"),
+    "private_key_id": get_str_env("GOOGLE_PRIVATE_KEY_ID"),
+    "private_key": get_str_env("GOOGLE_PRIVATE_KEY").replace("\\n", "\n"),
+    "client_email": get_str_env("GOOGLE_CLIENT_EMAIL"),
+    "client_id": get_str_env("GOOGLE_CLIENT_ID"),
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": get_str_env("GOOGLE_CLIENT_X509_CERT_URL"),
+}
 CLIENT_ID = get_str_env("GOOGLE_OAUTH_CLIENT_ID")
 CLIENT_SECRET = get_str_env("GOOGLE_OAUTH_CLIENT_SECRET")
 
@@ -33,7 +32,8 @@ SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive.file",
     "https://www.googleapis.com/auth/drive",
-] + YOUTUBE_SCOPES
+    *YOUTUBE_SCOPES,
+]
 
 CLIENT_CREDENTIALS_CACHE = None
 CLIENT_CREDENTIALS_PICKLE_FILE = ".google_client_credentials"
@@ -66,7 +66,9 @@ def get_client_credentials():
 
     try:
         with open(CLIENT_CREDENTIALS_PICKLE_FILE, "rb") as handle:
-            CLIENT_CREDENTIALS_CACHE = pickle.load(handle)
+            CLIENT_CREDENTIALS_CACHE = pickle.load(  # noqa: S301 (own cache file)
+                handle
+            )
         return CLIENT_CREDENTIALS_CACHE
     except FileNotFoundError:
         pass

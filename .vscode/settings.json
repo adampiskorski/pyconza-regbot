@@ -2,20 +2,15 @@
   "python.testing.pytestArgs": ["."],
   "python.testing.pytestEnabled": true,
   "python.testing.unittestEnabled": false,
-  "python.linting.mypyEnabled": true,
-  "python.linting.enabled": true,
   "python.languageServer": "Pylance",
-  "python.analysis.typeCheckingMode": "off", // Use MyPy instead
+  "python.analysis.typeCheckingMode": "off", // Use ty instead (uv run ty check)
   "python.formatting.provider": "none",
-  "python.formatting.blackArgs": ["--line-length", "90"],
-  "python.linting.mypyCategorySeverity.error": "Information",
-  "mypy.runUsingActiveInterpreter": true,
   "python.analysis.indexing": true,
   "autoDocstring.docstringFormat": "google-notypes",
   "autoDocstring.generateDocstringOnEnter": true,
   "autoDocstring.guessTypes": true,
   "[python]": {
-    "editor.defaultFormatter": "ms-python.black-formatter"
+    "editor.defaultFormatter": "charliermarsh.ruff"
   },
   "files.associations": {
     "**/*.html": "jinja-html",

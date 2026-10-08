@@ -3,3 +3,10 @@
 __pycache__/
 .envrc
 .google_client_credentials
+.venv/
+
+*.egg-info/
+
+.direnv
+
+**/.pi/subagentura-state.json

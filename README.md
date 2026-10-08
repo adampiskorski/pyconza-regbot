@@ -74,24 +74,20 @@ Feature flags that turns certain features on or off. Note that some features, li
 
 ## Run
 
-Using [poetry](https://python-poetry.org/)
+Using [uv](https://docs.astral.sh/uv/) (with a nix devShell on NixOS)
 
-> `poetry install --no-dev`
-
-Then activate the virtualenv with
-
-> `poetry shell`
+> `uv sync --no-dev`
 
 Then start the server with
 
-> `python -m regbot`
+> `uv run python -m regbot`
 
 ## Development
 
 Install dev dependencies with
 
-> `poetry install`
+> `uv sync`
 
 Configure [pre-commit](https://pre-commit.com/) with
 
-> `pre-commit install`
+> `uv run pre-commit install`

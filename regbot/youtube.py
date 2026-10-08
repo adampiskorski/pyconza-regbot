@@ -1,5 +1,3 @@
-from typing import Dict, List, Optional, Set
-
 import arrow
 import googleapiclient.discovery
 from discord.channel import TextChannel
@@ -8,7 +6,7 @@ from regbot.google import get_client_credentials
 from regbot.helpers import get_str_env, to_discord_description_safe, to_discord_title_safe
 
 YOUTUBE_PLAYLIST = get_str_env("YOUTUBE_PLAYLIST")
-CHANNEL_BROADCAST_MAP_TYPE = Dict[TextChannel, dict]
+CHANNEL_BROADCAST_MAP_TYPE = dict[TextChannel, dict]
 BROADCAST_CHANNELS: CHANNEL_BROADCAST_MAP_TYPE = {}
 ANNOUNCED_BROADCASTS = set()
 
@@ -27,7 +25,7 @@ def save_channel_broadcast_map(channel_broadcast_map: CHANNEL_BROADCAST_MAP_TYPE
     BROADCAST_CHANNELS = channel_broadcast_map
 
 
-def get_all_broadcasts() -> List[dict]:
+def get_all_broadcasts() -> list[dict]:
     """Get all the broadcasts for the playlist in the defined environment and return
     a list of ordered dictionaries defining them with the following keys:
         "id": Can be used to generate a link to the YouTube video
@@ -88,8 +86,8 @@ def mark_broadcast_as_announced(channel: TextChannel) -> None:
 
 
 async def all_upcoming_broadcasts(
-    seconds: Optional[int] = None,
-) -> Set[TextChannel]:
+    seconds: int | None = None,
+) -> set[TextChannel]:
     """All upcoming broadcast channels that have yet to be announced. If minutes are
     given, then it will only mention the events comming up in the given number of minutes.
     """
@@ -100,7 +98,7 @@ async def all_upcoming_broadcasts(
         if (
             channel not in ANNOUNCED_BROADCASTS
             and diff > 0
-            and (seconds and diff <= seconds or not seconds)
+            and ((seconds and diff <= seconds) or not seconds)
         ):
             channels.add(channel)
     return channels

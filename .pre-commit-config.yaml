@@ -1,13 +1,14 @@
 default_language_version:
-    python: python3.11
+    python: python3.14
 repos:
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.0.278"
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: "v0.16.10"
     hooks:
-      - id: ruff
+      - id: ruff-check
+      - id: ruff-format
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: "v4.4.0"
+    rev: "v6.0.0"
     hooks:
       # See https://pre-commit.com/hooks.html for more hooks
       - id: check-yaml
@@ -22,22 +23,10 @@ repos:
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
 
-  - repo: https://github.com/psf/black
-    rev: 23.7.0
+  - repo: local
     hooks:
-      - id: black
-        exclude: "[a-zA-Z]*/(migrations)/(.)*"
-
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.4.1"
-    hooks:
-      - id: mypy
-        exclude: "[a-zA-Z]*/(migrations)/(.)*"
-        additional_dependencies:
-          [
-            "discord-py",
-            "gspread-asyncio",
-            "httpx",
-            "ics",
-            "arrow"
-          ]
+      - id: ty
+        name: ty
+        entry: uv run ty check
+        language: system
+        pass_filenames: false

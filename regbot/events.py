@@ -1,9 +1,14 @@
-from discord import Reaction, User
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from regbot import bot
 from regbot.google import get_client_credentials
 from regbot.helpers import ServerInfo, get_bool_env, get_str_env, log
 from regbot.tasks import QuicketSync, WaferSync, YouTubeVideoSync
+
+if TYPE_CHECKING:
+    from discord import Reaction, User
 
 FEATURE_WAFER_SYNC = get_bool_env("FEATURE_WAFER_SYNC")
 FEATURE_QUICKET_SYNC = get_bool_env("FEATURE_QUICKET_SYNC")
@@ -26,8 +31,8 @@ async def on_ready():
         await bot.add_cog(WaferSync(bot))
     if FEATURE_YOUTUBE:
         # Get oAuth Credentials on start.
-        credentials = get_client_credentials()
-        bot.add_cog(YouTubeVideoSync(bot))
+        get_client_credentials()
+        await bot.add_cog(YouTubeVideoSync(bot))
 
 
 @bot.event

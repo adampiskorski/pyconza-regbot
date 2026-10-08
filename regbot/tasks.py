@@ -1,8 +1,12 @@
-from typing import List
+from __future__ import annotations
 
-from discord.channel import TextChannel
+from typing import TYPE_CHECKING
+
 from discord.ext import commands, tasks
 from discord.utils import get
+
+if TYPE_CHECKING:
+    from discord.channel import TextChannel
 
 from regbot.helpers import (
     ServerInfo,
@@ -121,8 +125,8 @@ class YouTubeVideoSync(commands.Cog):
 
     @staticmethod
     async def purge_duplicate_titled_channels(
-        channels: List[TextChannel],
-    ) -> List[TextChannel]:
+        channels: list[TextChannel],
+    ) -> list[TextChannel]:
         """Make sure that only one channel per channel name in the given list remains.
         Not done in any particular order.
         """

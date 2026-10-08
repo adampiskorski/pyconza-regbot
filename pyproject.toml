@@ -1,38 +1,38 @@
-[tool.poetry]
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
 name = "pyconza-regbot"
 version = "0.1.0"
-description = ""
-authors = ["Adam Piskorski <adam@piskorski.me>"]
+description = "PyConZA Discord registration bot"
+authors = [{name = "Adam Piskorski", email = "adam@piskorski.me"}]
+requires-python = ">=3.14"
+dependencies = [
+    "discord-py>=2.3.2",
+    "httpx>=0.25.0",
+    "gspread-asyncio>=1.9.0",
+    "ics>=0.7.2",
+    "arrow>=1.3.0",
+    "google-api-python-client>=2.184.0",
+    "google-auth>=2.41.1",
+    "google-auth-httplib2>=0.2.0",
+    "google-auth-oauthlib>=1.2.2",
+    "pytz>=2025.2",
+]
 
-[tool.poetry.dependencies]
-python = "3.11.11"
-discord-py = "^2.3.2"
-httpx = "^0.25.0"
-gspread-asyncio = "^1.9.0"
-ics = "^0.7.2"
-arrow = "^1.3.0"
-google-api-python-client = "^2.184.0"
-google-auth = "^2.41.1"
-google-auth-httplib2 = "^0.2.0"
-google-auth-oauthlib = "^1.2.2"
-pytz = "^2025.2"
+[dependency-groups]
+dev = [
+    "pytest>=9.0",
+    "pre-commit>=4.0",
+    "ruff>=0.16",
+    "ty>=0.0.84",
+    "rich>=15.0",
+    "bpython>=0.24",
+]
 
-[tool.poetry.group.dev.dependencies]
-mypy = "^1.5.1"
-pytest = "^7.4.2"
-black = "^23.9.1"
-pre-commit = "^3.4.0"
-ruff = "^0.0.291"
-rich = "^13.6.0"
-bpython = "^0.24"
-
-[build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
-
-[tool.black]
-line-length = 90
-target-version = ['py311']
+[tool.setuptools.packages.find]
+include = ["regbot"]
 
 [tool.pytest.ini_options]
 norecursedirs = [
@@ -45,7 +45,7 @@ norecursedirs = [
 ]
 
 [tool.ruff]
-select = [
+lint.select = [
     "A",
     "B",
     "BLE",
@@ -71,15 +71,25 @@ select = [
     "SIM",
     "T10",
     "T20",
-    "TCH",
+    "TC",
     "TID",
     "UP",
     "W",
 ]
-ignore = ["E501", "D", "S311", "S101"]
+lint.ignore = ["E501", "D", "S311", "S101"]
 line-length = 90
 show-fixes = true
-target-version = "py311"
+target-version = "py314"
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+# One-off maintenance scripts: not a package and print() is their UI
+"regbot/scripts/*" = ["INP001", "T201"]
+
+[tool.ty.rules]
+# discord.py exposes broad channel unions (e.g. GuildChannel | PrivateChannel) and
+# imprecise decorator signatures, so these two rules mostly produce noise here.
+unresolved-attribute = "ignore"
+invalid-argument-type = "ignore"

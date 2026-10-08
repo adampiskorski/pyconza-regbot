@@ -22,7 +22,7 @@ class Ticket:
     valid: bool
     first_name: str
     surname: str
-    type: str  # noqa: A003
+    type: str
 
     @property
     def full_name(self) -> str:
