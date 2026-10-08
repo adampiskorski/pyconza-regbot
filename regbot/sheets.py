@@ -100,8 +100,9 @@ class QuizQuestion:
             Cell(
                 self.row,
                 fields(QuizQuestion)[5].metadata["column"],
-                str(self.answerer_id)
-                or "",  # casting None to string does not give a falsy string
+                # An unanswered question is an empty cell (str(None) would be
+                # the literal string "None", which is not falsy).
+                str(self.answerer_id or ""),
             ),
         ]
 

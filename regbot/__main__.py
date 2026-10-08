@@ -2,9 +2,7 @@ import logging
 import os
 import sys
 
-import regbot.commands
-import regbot.events  # noqa: F401
-from regbot import bot
+from regbot import create_bot
 from regbot.helpers import get_str_env
 
 TOKEN = get_str_env("DISCORD_TOKEN")
@@ -20,4 +18,4 @@ logging.basicConfig(
 logger = logging.getLogger()
 
 
-bot.run(TOKEN)
+create_bot().run(TOKEN)

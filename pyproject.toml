@@ -9,7 +9,7 @@ description = "PyConZA Discord registration bot"
 authors = [{name = "Adam Piskorski", email = "adam@piskorski.me"}]
 requires-python = ">=3.14"
 dependencies = [
-    "discord-py>=2.3.2",
+    "discord-py>=2.7.1",
     "httpx>=0.25.0",
     "gspread-asyncio>=1.9.0",
     "ics>=0.7.2",
@@ -24,6 +24,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pytest>=9.0",
+    "simcord[pytest]>=3.0.1,<4",
     "pre-commit>=4.0",
     "ruff>=0.16",
     "ty>=0.0.84",
@@ -35,6 +36,7 @@ dev = [
 include = ["regbot"]
 
 [tool.pytest.ini_options]
+asyncio_mode = "auto"
 norecursedirs = [
     ".git",
     ".vscode",
@@ -87,6 +89,8 @@ convention = "google"
 [tool.ruff.lint.per-file-ignores]
 # One-off maintenance scripts: not a package and print() is their UI
 "regbot/scripts/*" = ["INP001", "T201"]
+# Test fakes deliberately mirror the googleapiclient camelCase method names
+"tests/*" = ["N802"]
 
 [tool.ty.rules]
 # discord.py exposes broad channel unions (e.g. GuildChannel | PrivateChannel) and

@@ -1,25 +1,29 @@
 from discord.errors import Forbidden
+from discord.ext import commands
 from googleapiclient.errors import HttpError
 
-from regbot import bot
-from regbot.helpers import ServerInfo, get_bool_env, get_str_env, log
+from regbot.helpers import ServerInfo, get_str_env, log
 from regbot.quicket import get_ticket_by_barcode
 from regbot.sheets import QuizQuestion, is_ticket_used, register_ticket
 from regbot.wafer import is_barcode_belong_to_speaker
 from regbot.youtube import get_broadcast_channels, get_youtube
 
 EVENT_NAME = get_str_env("EVENT_NAME")
-FEATURE_REGISTRATION = get_bool_env("FEATURE_REGISTRATION")
-FEATURE_YOUTUBE = get_bool_env("FEATURE_YOUTUBE")
-FEATURE_QUIZ = get_bool_env("FEATURE_QUIZ")
-BASE_URL = "https://youtube.googleapis.com/youtube/v3/"
-MESSAGES_URL = "liveChat/messages"
-LIVE_BROADCAST_URL = "liveBroadcasts"
 
-if FEATURE_REGISTRATION:
 
-    @bot.command("register")
-    async def register(ctx, barcode: str):  # noqa: C901
+def scoreboard_name(server_info: ServerInfo, member_id: int) -> str:
+    """The name to show on the quiz scoreboard for the given member ID."""
+    member = server_info.guild.get_member(member_id)
+    if member is None:
+        return "Unknown"
+    return member.nick or member.name
+
+
+class RegistrationCog(commands.Cog):
+    """User self-registration via Quicket ticket barcodes."""
+
+    @commands.command("register")
+    async def register(self, ctx: commands.Context, barcode: str):  # noqa: C901
         """Registers the calling user based on their Quicket ticket barcode number."""
         if ctx.channel.type.name != "private":
             await ctx.message.delete()
@@ -105,10 +109,11 @@ if FEATURE_REGISTRATION:
         return None
 
 
-if FEATURE_YOUTUBE:
+class QuestionCog(commands.Cog):
+    """Echoing questions from Discord to YouTube live chats."""
 
-    @bot.command("question")
-    async def question(ctx, *question_words):
+    @commands.command("question")
+    async def question(self, ctx: commands.Context, *question_words):
         """Echo a question to YouTube"""
         if not question_words:
             return await ctx.send(
@@ -157,10 +162,11 @@ if FEATURE_YOUTUBE:
         return await ctx.send(f"Thank you for your question {ctx.author.mention}")
 
 
-if FEATURE_QUIZ:
+class QuizCog(commands.Cog):
+    """The Google Sheets driven 'quiz hunt' game."""
 
-    @bot.command("quiz")
-    async def quiz(ctx, *answer_words):  # noqa: C901
+    @commands.command("quiz")
+    async def quiz(self, ctx: commands.Context, *answer_words):
         """Participate in the quiz hunt.
         Just use `!quiz` to get the question, or provide your answer after the `!quiz`
         command to try and answer the current question.
@@ -180,24 +186,17 @@ if FEATURE_QUIZ:
             if not result:
                 return await ctx.send(no_score_response)
             _id, score = result
-            member = server_info.guild.get_member(_id)
             return await ctx.send(
-                f"{member.nick if member else 'Unknown'} with a score of {score}"
+                f"{scoreboard_name(server_info, _id)} with a score of {score}"
             )
         if answer.lower() == "scores?":
             results = await QuizQuestion.scores()
             if not results:
                 return await ctx.send(no_score_response)
-            scores = []
-            for _id, score in results.items():
-                member = server_info.guild.get_member(_id)
-                if not member:
-                    name = "Unknown"
-                elif member.nick:
-                    name = member.nick
-                else:
-                    name = member.name
-                scores.append(f"{name} with a score of {score}")
+            scores = [
+                f"{scoreboard_name(server_info, _id)} with a score of {score}"
+                for _id, score in results.items()
+            ]
             return await ctx.send("\n".join(scores))
         question = await QuizQuestion.get_current_question()
         if not question:

@@ -91,3 +91,25 @@ Install dev dependencies with
 Configure [pre-commit](https://pre-commit.com/) with
 
 > `uv run pre-commit install`
+
+## Testing
+
+Run the test suite with
+
+> `uv run pytest`
+
+The tests come in two layers:
+
+- **Unit tests** for the pure logic and the external-API parsing
+  (`test_helpers.py`, `test_quicket.py`, `test_wafer.py`, `test_sheets.py`,
+  `test_youtube.py`). External services (Quicket, Wafer, Google Sheets,
+  YouTube) are faked at the seam in `tests/fakes.py`.
+- **Integration tests** for the Discord-facing behavior (`test_command_*.py`,
+  `test_events.py`, `test_tasks.py`), powered by
+  [SimCord](https://simcord.readthedocs.io): the real bot runs against an
+  in-memory Discord, so commands, events and background task loops are
+  exercised end to end without a token, network or test server.
+
+The tests are written to double as documentation of the bot's behavior, in
+the Arrange / Act / Assert style (builders, actors and queries in SimCord
+terms).

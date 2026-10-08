@@ -94,7 +94,12 @@ class WaferSync(commands.Cog):
 
     @tasks.loop(seconds=WAFER_ANNOUNCE_INTERVAL_SECONDS)
     async def announcement_loop(self):
-        """Regular check for events to announce, then do so and cache to avoid repeating."""
+        await self.announce_upcoming_events()
+
+    async def announce_upcoming_events(self):
+        """Check for events to announce, then do so and cache to avoid repeating."""
+        if not self.bot.guilds:
+            return  # The guild is not available yet (e.g. right after connecting).
         server_info = await ServerInfo.get()
         events = await all_upcoming_events(minutes=WAFER_UPCOMING_EVENTS_BOUNDARY_MINUTES)
         for event in events:
@@ -144,7 +149,12 @@ class YouTubeVideoSync(commands.Cog):
 
     @tasks.loop(minutes=YOUTUBE_CREATE_CHANNELS_MINUTES)
     async def create_channels(self):
+        await self.sync_channels()
+
+    async def sync_channels(self):
         """Create discord channels that mirror YouTube channels if they don't yet exist."""
+        if not self.bot.guilds:
+            return  # The guild is not available yet (e.g. right after connecting).
         broadcasts = get_all_broadcasts()
         await log("Found broadcasts, iterating through them...")
         server_info = await ServerInfo.get()
@@ -208,9 +218,12 @@ class YouTubeVideoSync(commands.Cog):
 
     @tasks.loop(seconds=YOUTUBE_ANNOUNCE_INTERVAL_SECONDS)
     async def announcement_loop(self):
-        """Regular check for broadcasts to announce, then do so and cache to avoid
-        repeating.
-        """
+        await self.announce_starting_broadcasts()
+
+    async def announce_starting_broadcasts(self):
+        """Check for broadcasts to announce, then do so and cache to avoid repeating."""
+        if not self.bot.guilds:
+            return  # The guild is not available yet (e.g. right after connecting).
         server_info = await ServerInfo.get()
         channels = await all_upcoming_broadcasts(
             seconds=YOUTUBE_UPCOMING_BOUNDARY_SECONDS

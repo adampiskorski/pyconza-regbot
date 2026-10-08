@@ -21,7 +21,7 @@ from discord import (
 from discord.abc import Messageable, PrivateChannel
 from discord.utils import get
 
-from regbot import bot
+import regbot
 
 ChannelType = (
     VoiceChannel
@@ -118,8 +118,13 @@ LOG_CHANNEL = get_int_env("DISCORD_LOG_CHANNEL_ID")
 async def log(message: str):
     """Helper to log to discord as well as standard logging"""
     logging.info(message)
-    channel = bot.get_channel(LOG_CHANNEL)
-    assert channel is not None, "Need a log channel!"
+    if regbot.bot is None:
+        logging.warning("No bot has been created yet, cannot log to discord!")
+        return
+    channel = regbot.bot.get_channel(LOG_CHANNEL)
+    if channel is None:
+        logging.warning("Need a log channel to log to discord!")
+        return
     await safe_send_message(channel, message)
 
 
@@ -163,7 +168,7 @@ class ServerInfo:
         global SERVER_INFO_CACHE
 
         if SERVER_INFO_CACHE is None:
-            guild = bot.get_guild(GUILD_ID)
+            guild = regbot.bot.get_guild(GUILD_ID)
             assert guild is not None, "No guild was found!"
 
             attendee = get(guild.roles, name=ATTENDEE_ROLE)
@@ -187,23 +192,25 @@ class ServerInfo:
             gold_sponsor = get(guild.roles, name=SPONSOR_GOLD_ROLE)
             assert gold_sponsor is not None, "The gold sponsor role was not found!"
 
-            help_desk = bot.get_channel(HELP_DESK)
+            help_desk = regbot.bot.get_channel(HELP_DESK)
             assert help_desk is not None, "The help desk channel was not found!"
 
-            welcome_channel = bot.get_channel(WELCOME_CHANNEL)
+            welcome_channel = regbot.bot.get_channel(WELCOME_CHANNEL)
             assert welcome_channel is not None, "The general channel was not found!"
 
-            announcement_channel = bot.get_channel(ANNOUNCEMENT_CHANNEL)
+            announcement_channel = regbot.bot.get_channel(ANNOUNCEMENT_CHANNEL)
             assert announcement_channel is not None, (
                 "The announcement channel was not found!"
             )
 
-            announcement_staging_channel = bot.get_channel(ANNOUNCEMENT_STAGING_CHANNEL)
+            announcement_staging_channel = regbot.bot.get_channel(
+                ANNOUNCEMENT_STAGING_CHANNEL
+            )
             assert announcement_staging_channel is not None, (
                 "The announcement staging channel was not found!"
             )
 
-            youtube_category = bot.get_channel(YOUTUBE_CATEGORY)
+            youtube_category = regbot.bot.get_channel(YOUTUBE_CATEGORY)
             assert youtube_category is not None, "The YouTube category was not found!"
 
             SERVER_INFO_CACHE = cls(
